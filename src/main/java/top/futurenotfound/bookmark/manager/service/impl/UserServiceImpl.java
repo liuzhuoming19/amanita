@@ -1,20 +1,19 @@
 package top.futurenotfound.bookmark.manager.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.bookmark.manager.domain.Authority;
 import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.mapper.UserMapper;
-import top.futurenotfound.bookmark.manager.service.AuthorityService;
 import top.futurenotfound.bookmark.manager.service.UserService;
+import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户
@@ -22,19 +21,36 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UserService, UserDetailsService {
-    private final AuthorityService authorityService;
+        implements UserService {
 
     @Override
     public User getById(Serializable id) {
         User user = super.getById(id);
-        List<Authority> authorityList = authorityService.listByUserId(id);
-        user.setAuthorities(authorityList);
+        //TODO 添加是否vip查询
         return user;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User getOne(Wrapper<User> queryWrapper, boolean throwEx) {
+        User user = super.getOne(queryWrapper, throwEx);
+        //TODO 添加是否vip查询
+        return user;
+    }
+
+    @Override
+    public boolean saveOrUpdate(User entity) {
+        User user = getByUsername(entity.getUsername());
+        if (user != null && !Objects.equals(user.getId(), entity.getId())) {
+            throw new BookmarkException(ExceptionCode.USERNAME_WAS_USED);
+        }
+        String password = PasswordUtil.compute(entity.getPassword(), entity.getUsername());
+        //重设加密后的密码
+        entity.setPassword(password);
+        return super.saveOrUpdate(entity);
+    }
+
+    @Override
+    public User getByUsername(String username) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getUsername, username);
         return this.getOne(userLambdaQueryWrapper);

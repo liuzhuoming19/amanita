@@ -5,20 +5,21 @@
 <mapper namespace="top.futurenotfound.bookmark.manager.mapper.BookmarkMapper">
 
     <resultMap id="BaseResultMap" type="top.futurenotfound.bookmark.manager.domain.Bookmark">
-            <id property="id" column="id" jdbcType="VARCHAR"/>
-            <result property="url" column="url" jdbcType="VARCHAR"/>
-            <result property="title" column="title" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="domain" column="domain" jdbcType="VARCHAR"/>
-            <result property="excerpt" column="excerpt" jdbcType="VARCHAR"/>
-            <result property="isRead" column="is_read" jdbcType="INTEGER"/>
-            <result property="isInvalid" column="is_invalid" jdbcType="INTEGER"/>
-            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="url" column="url" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="domain" column="domain" jdbcType="VARCHAR"/>
+        <result property="excerpt" column="excerpt" jdbcType="VARCHAR"/>
+        <result property="isRead" column="is_read" jdbcType="INTEGER"/>
+        <result property="isInvalid" column="is_invalid" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,url,title,
+        id
+        ,url,title,
         create_time,update_time,domain,
         excerpt,is_read,is_invalid,
         user_id

@@ -8,4 +8,5 @@ import top.futurenotfound.bookmark.manager.domain.User;
  */
 public interface UserService extends IService<User> {
 
+    User getByUsername(String username);
 }

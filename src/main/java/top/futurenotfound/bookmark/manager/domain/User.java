@@ -4,24 +4,19 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.Date;
 
 /**
  * 用户
+ * <p>
+ * user为postgresql关键字，做表名使用需使用双引号括起来
  *
  * @TableName user
  */
-@TableName(value = "user")
+@TableName(value = "\"user\"")
 @Data
-public class User implements UserDetails {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-    /**
-     *
-     */
+public class User {
     @TableId(value = "id")
     private String id;
     /**
@@ -48,30 +43,15 @@ public class User implements UserDetails {
      *
      */
     @TableField(value = "create_time")
-    private LocalDateTime createTime;
+    private Date createTime;
     /**
      *
      */
     @TableField(value = "update_time")
-    private LocalDateTime updateTime;
+    private Date updateTime;
     /**
-     * 权限集合
+     * 角色标识
      */
     @TableField(exist = false)
-    private Collection<Authority> authorities;
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    private String role = "USER";
 }

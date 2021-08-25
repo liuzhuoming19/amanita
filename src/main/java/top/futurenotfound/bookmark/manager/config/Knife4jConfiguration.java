@@ -1,6 +1,7 @@
 package top.futurenotfound.bookmark.manager.config;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -34,13 +35,14 @@ public class Knife4jConfiguration {
                                         "liuzhuoming23@live.com"
                                 )
                         )
-                        .version("1.0")
+                        .version("0.0.1")
                         .build())
                 //分组名称
-                .groupName("2.x.x版本")
+                .groupName("0.x.x版本")
                 .select()
                 //这里指定Controller扫描包路径
-                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class))
+                .apis(RequestHandlerSelectors.withClassAnnotation(Api.class)
+                        .and(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class)))
                 .paths(PathSelectors.any())
                 .build();
     }

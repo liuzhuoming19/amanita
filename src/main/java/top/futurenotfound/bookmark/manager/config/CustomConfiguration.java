@@ -8,11 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import top.futurenotfound.bookmark.manager.service.AuthorityService;
-import top.futurenotfound.bookmark.manager.service.impl.UserServiceImpl;
 
 /**
  * 自定义配置
@@ -21,16 +16,6 @@ import top.futurenotfound.bookmark.manager.service.impl.UserServiceImpl;
  */
 @Configuration
 public class CustomConfiguration {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(AuthorityService authorityService) {
-        return new UserServiceImpl(authorityService);
-    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory factory) {
