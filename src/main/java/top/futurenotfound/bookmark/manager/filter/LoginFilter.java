@@ -93,7 +93,7 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        String token = req.getHeader("token");
+        String token = req.getHeader("Authorization");
         //jwt解析
         try {
             String username = jwtHelper.getUsername(token);

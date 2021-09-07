@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import top.futurenotfound.bookmark.manager.domain.TokenEntity;
 import top.futurenotfound.bookmark.manager.domain.User;
-import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.JwtHelper;
@@ -37,16 +37,9 @@ public class LoginController {
                                              @RequestParam String password) {
         User user = userService.getByUsername(username);
         if (user == null || Objects.equals(PasswordUtil.compute(password, username), user.getPassword())) {
-            throw new BookmarkException(ExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
+            throw new AuthException(ExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         }
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());
-        return ResponseEntity.ok(tokenEntity);
-    }
-
-    @GetMapping("test")
-    @ApiOperation("登陆")
-    public ResponseEntity<TokenEntity> test() {
-        TokenEntity tokenEntity = jwtHelper.create("liuzhuoming", "SUPERMAN");
         return ResponseEntity.ok(tokenEntity);
     }
 }

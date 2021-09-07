@@ -6,6 +6,7 @@ import cn.hutool.jwt.JWTUtil;
 import cn.hutool.jwt.RegisteredPayload;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.TokenEntity;
@@ -48,9 +49,10 @@ public class JwtHelper {
     }
 
     public void verify(String token) {
-        boolean tf = JWTUtil.verify(token, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
-        if (!tf) {
+        if (StringUtils.isNotEmpty(token))
             throw new JWTException(StrFormatter.format("JWT 解析失败----【{}】", token));
-        }
+        boolean tf = JWTUtil.verify(token, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
+        if (!tf)
+            throw new JWTException(StrFormatter.format("JWT 解析失败----【{}】", token));
     }
 }

@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 public class JsonUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
+    private JsonUtil() {
+    }
+
     public static <T> String toJson(T t) {
         try {
             return objectMapper.writeValueAsString(t);
