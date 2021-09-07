@@ -11,10 +11,10 @@ import lombok.Getter;
 @Getter
 public class BookmarkException extends RuntimeException {
     private static final long serialVersionUID = -5786150841339936581L;
-    private final ExceptionCode code;
+    private final ExceptionCode exceptionCode;
 
-    public BookmarkException(ExceptionCode code) {
-        super(StrFormatter.format("({}){}", code.getCode(), code.getMsg()));
-        this.code = code;
+    public BookmarkException(ExceptionCode exceptionCode) {
+        super(StrFormatter.format("({}){}", exceptionCode.getCode(), exceptionCode.getMsg()));
+        this.exceptionCode = exceptionCode;
     }
 }

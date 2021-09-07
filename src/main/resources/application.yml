@@ -14,3 +14,8 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
+
+#自定义配置参数
+custom:
+  token-expire-time-amount: 24
+  token-expire-time-unit: hours

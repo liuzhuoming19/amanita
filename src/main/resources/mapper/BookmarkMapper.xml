@@ -15,6 +15,7 @@
         <result property="isRead" column="is_read" jdbcType="INTEGER"/>
         <result property="isInvalid" column="is_invalid" jdbcType="INTEGER"/>
         <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -22,6 +23,6 @@
         ,url,title,
         create_time,update_time,domain,
         excerpt,is_read,is_invalid,
-        user_id
+        user_id,note
     </sql>
 </mapper>

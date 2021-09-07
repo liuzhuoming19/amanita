@@ -43,8 +43,8 @@ public class Bookmark {
     /**
      * 书签地址域名
      */
-    @TableField(value = "domain")
-    private String domain;
+    @TableField(value = "host")
+    private String host;
     /**
      * 页面摘要
      */
@@ -65,4 +65,9 @@ public class Bookmark {
      */
     @TableField(value = "user_id")
     private String userId;
+    /**
+     * 书签笔记
+     */
+    @TableField(value = "note")
+    private String note;
 }

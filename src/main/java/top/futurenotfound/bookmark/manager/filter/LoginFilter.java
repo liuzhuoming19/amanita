@@ -4,20 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import top.futurenotfound.bookmark.manager.domain.Result;
 import top.futurenotfound.bookmark.manager.domain.User;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
-import top.futurenotfound.bookmark.manager.util.JsonUtil;
-import top.futurenotfound.bookmark.manager.util.JwtUtil;
+import top.futurenotfound.bookmark.manager.util.JwtHelper;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -45,7 +41,7 @@ public class LoginFilter implements Filter {
             "/v3/**",
             //other
             //登录
-            "/login"
+            "/login/**"
     );
     /**
      * 登录后无需权限配置就可以访问
@@ -68,6 +64,7 @@ public class LoginFilter implements Filter {
             "/access/**"
     );
     private UserService userService;
+    private JwtHelper jwtHelper;
 
     /**
      * 判断url请求是否配置在patterns列表中
@@ -99,16 +96,12 @@ public class LoginFilter implements Filter {
         String token = req.getHeader("token");
         //jwt解析
         try {
-            String username = JwtUtil.getUsername(token);
+            String username = jwtHelper.getUsername(token);
             User user = userService.getByUsername(username);
             //存入线程变量
             CurrentLoginUser.set(user);
         } catch (Exception e) {
-            Result<String> result = new Result<>(ExceptionCode.TOKEN_EXPIRED);
-            OutputStream outputStream = resp.getOutputStream();
-            outputStream.write(JsonUtil.toJson(result).getBytes());
-            outputStream.flush();
-            outputStream.close();
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 

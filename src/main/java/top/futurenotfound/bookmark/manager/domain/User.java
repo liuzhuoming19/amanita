@@ -49,6 +49,7 @@ public class User {
      */
     @TableField(value = "update_time")
     private Date updateTime;
+
     /**
      * 角色标识
      */
