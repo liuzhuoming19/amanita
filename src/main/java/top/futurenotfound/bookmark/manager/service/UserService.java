@@ -1,7 +1,7 @@
 package top.futurenotfound.bookmark.manager.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.entity.User;
 
 /**
  * 用户

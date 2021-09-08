@@ -1,6 +1,6 @@
 package top.futurenotfound.bookmark.manager.util;
 
-import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.entity.User;
 
 /**
  * 当前登陆用户信息

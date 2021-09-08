@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.domain;
+package top.futurenotfound.bookmark.manager.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

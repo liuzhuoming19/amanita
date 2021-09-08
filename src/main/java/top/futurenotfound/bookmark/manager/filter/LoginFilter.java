@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.entity.User;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.JwtHelper;
@@ -63,8 +63,8 @@ public class LoginFilter implements Filter {
     private static final List<String> VIP_URL = List.of(
             "/access/**"
     );
-    private UserService userService;
-    private JwtHelper jwtHelper;
+    private final UserService userService;
+    private final JwtHelper jwtHelper;
 
     /**
      * 判断url请求是否配置在patterns列表中

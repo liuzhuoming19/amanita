@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.entity.User;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.mapper.UserMapper;

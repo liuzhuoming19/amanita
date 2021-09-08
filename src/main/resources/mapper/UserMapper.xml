@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="top.futurenotfound.bookmark.manager.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="top.futurenotfound.bookmark.manager.domain.User">
+    <resultMap id="BaseResultMap" type="top.futurenotfound.bookmark.manager.entity.User">
         <id property="id" column="id" jdbcType="VARCHAR"/>
         <result property="username" column="username" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>

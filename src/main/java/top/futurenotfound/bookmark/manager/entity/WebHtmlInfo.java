@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.domain;
+package top.futurenotfound.bookmark.manager.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
