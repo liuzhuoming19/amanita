@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.util;
+package top.futurenotfound.bookmark.manager.helper;
 
 import cn.hutool.core.text.StrFormatter;
 import cn.hutool.jwt.JWTException;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.entity.TokenEntity;
 import top.futurenotfound.bookmark.manager.env.Constant;
+import top.futurenotfound.bookmark.manager.util.DateUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

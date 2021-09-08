@@ -5,9 +5,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import top.futurenotfound.bookmark.manager.entity.User;
+import top.futurenotfound.bookmark.manager.helper.JwtHelper;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
-import top.futurenotfound.bookmark.manager.util.JwtHelper;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

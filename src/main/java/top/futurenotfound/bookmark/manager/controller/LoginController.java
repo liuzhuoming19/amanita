@@ -12,8 +12,8 @@ import top.futurenotfound.bookmark.manager.entity.TokenEntity;
 import top.futurenotfound.bookmark.manager.entity.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.helper.JwtHelper;
 import top.futurenotfound.bookmark.manager.service.UserService;
-import top.futurenotfound.bookmark.manager.util.JwtHelper;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
 import java.util.Objects;

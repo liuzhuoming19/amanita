@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.util;
+package top.futurenotfound.bookmark.manager.helper;
 
 import cn.edu.hfut.dmic.contentextractor.ContentExtractor;
 import cn.edu.hfut.dmic.contentextractor.News;
