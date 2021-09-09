@@ -32,21 +32,13 @@ public class ContentExtractorHelper {
      *
      * @param origUrl 原始url
      */
-    public static WebExcerptInfo excerpt(String origUrl) {
-        String url;
+    public static WebExcerptInfo excerpt(String url) {
         URL uRL;
-
-        if (!origUrl.startsWith(Constant.HTTPS) && !origUrl.startsWith(Constant.HTTP)) {
-            url = Constant.HTTPS + origUrl;
-        } else {
-            url = origUrl;
-        }
-
         try {
             uRL = new URL(url);
         } catch (MalformedURLException e) {
             //构建URl失败
-            return new WebExcerptInfo(origUrl, null, origUrl, null, null);
+            return new WebExcerptInfo(url, null, url, null, null);
         }
 
         try {
@@ -74,11 +66,11 @@ public class ContentExtractorHelper {
                 }
             } catch (Exception ignored) {
             }
-            return new WebExcerptInfo(origUrl, uRL.getHost(), title, excerpt, imageUrl);
+            return new WebExcerptInfo(url, uRL.getHost(), title, excerpt, imageUrl);
         } catch (Exception e) {
             log.error("{}", e);
             //抽取正文失败
-            return new WebExcerptInfo(origUrl, uRL.getHost(), uRL.getHost(), null, null);
+            return new WebExcerptInfo(url, uRL.getHost(), uRL.getHost(), null, null);
         }
     }
 
@@ -87,21 +79,13 @@ public class ContentExtractorHelper {
      *
      * @param origUrl 原始url
      */
-    public static WebHtmlInfo html(String origUrl) {
-        String url;
+    public static WebHtmlInfo html(String url) {
         URL uRL;
-
-        if (!origUrl.startsWith(Constant.HTTPS) && !origUrl.startsWith(Constant.HTTP)) {
-            url = Constant.HTTPS + origUrl;
-        } else {
-            url = origUrl;
-        }
-
         try {
             uRL = new URL(url);
         } catch (MalformedURLException e) {
             //构建URl失败
-            return new WebHtmlInfo(origUrl, null, origUrl, null);
+            return new WebHtmlInfo(url, null, url, null);
         }
 
         try {
@@ -109,18 +93,14 @@ public class ContentExtractorHelper {
             Request request = new Request.Builder().url(uRL).build();
             Response response = okHttpClient.newCall(request).execute();
             if (response.body() == null) {
-                return new WebHtmlInfo(origUrl, uRL.getHost(), origUrl, null);
+                return new WebHtmlInfo(url, uRL.getHost(), url, null);
             }
             String html = response.body().string();
-            return new WebHtmlInfo(origUrl, uRL.getHost(), origUrl, html);
+            return new WebHtmlInfo(url, uRL.getHost(), url, html);
         } catch (IOException e) {
             log.error("{}", e);
             //抽取html失败
-            return new WebHtmlInfo(origUrl, uRL.getHost(), origUrl, null);
+            return new WebHtmlInfo(url, uRL.getHost(), url, null);
         }
-    }
-
-    public static void main(String[] args) {
-        log.info(excerpt("https://zhuanlan.zhihu.com/p/341867459").toString());
     }
 }

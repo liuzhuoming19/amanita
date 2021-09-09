@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.URL;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 /**
@@ -18,9 +20,6 @@ import java.util.Date;
 @Data
 @ApiModel(value = "Bookmark", description = "书签")
 public class Bookmark {
-    /**
-     * id
-     */
     @TableId(value = "id")
     @ApiModelProperty("id")
     private String id;
@@ -29,6 +28,8 @@ public class Bookmark {
      */
     @TableField(value = "url")
     @ApiModelProperty("书签url")
+    @URL
+    @NotEmpty
     private String url;
     /**
      * 书签标题
@@ -36,16 +37,6 @@ public class Bookmark {
     @TableField(value = "title")
     @ApiModelProperty("书签标题")
     private String title;
-    /**
-     *
-     */
-    @TableField(value = "create_time")
-    private Date createTime;
-    /**
-     *
-     */
-    @TableField(value = "update_time")
-    private Date updateTime;
     /**
      * 书签地址域名
      */
@@ -75,6 +66,7 @@ public class Bookmark {
      */
     @TableField(value = "user_id")
     @ApiModelProperty("数据绑定的用户id")
+    @NotEmpty
     private String userId;
     /**
      * 书签笔记
@@ -82,4 +74,10 @@ public class Bookmark {
     @TableField(value = "note")
     @ApiModelProperty("书签笔记")
     private String note;
+
+    @TableField(value = "create_time")
+    private Date createTime;
+    @TableField(value = "update_time")
+    private Date updateTime;
+
 }

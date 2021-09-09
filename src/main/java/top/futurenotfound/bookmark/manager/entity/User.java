@@ -3,8 +3,12 @@ package top.futurenotfound.bookmark.manager.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 /**
@@ -16,37 +20,41 @@ import java.util.Date;
  */
 @TableName(value = "\"user\"")
 @Data
+@ApiModel(value = "User", description = "用户")
 public class User {
     @TableId(value = "id")
+    @ApiModelProperty("id")
     private String id;
     /**
      * 用户名
      */
     @TableField(value = "username")
+    @ApiModelProperty("用户名")
+    @NotEmpty
     private String username;
     /**
      * 邮箱地址
      */
     @TableField(value = "email")
+    @ApiModelProperty("邮箱地址")
+    @Email
     private String email;
     /**
      * 密码（加密后）
      */
     @TableField(value = "password")
+    @ApiModelProperty("密码")
+    @NotEmpty
     private String password;
     /**
      * 是否可用（0不可用 1可用）
      */
     @TableField(value = "enabled")
+    @ApiModelProperty("是否可用（0不可用 1可用）")
     private boolean enabled;
-    /**
-     *
-     */
+
     @TableField(value = "create_time")
     private Date createTime;
-    /**
-     *
-     */
     @TableField(value = "update_time")
     private Date updateTime;
 
@@ -54,5 +62,6 @@ public class User {
      * 角色标识
      */
     @TableField(exist = false)
+    @ApiModelProperty("角色标识")
     private String role = "USER";
 }

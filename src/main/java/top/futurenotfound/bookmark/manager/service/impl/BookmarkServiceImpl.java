@@ -16,6 +16,7 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
     @Override
     public boolean save(Bookmark bookmark) {
 
+
         return false;
     }
 
