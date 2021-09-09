@@ -13,6 +13,16 @@ import top.futurenotfound.bookmark.manager.service.BookmarkService;
 public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         implements BookmarkService {
 
+    @Override
+    public boolean save(Bookmark bookmark) {
+
+        return false;
+    }
+
+    @Override
+    public boolean updateById(Bookmark bookmark) {
+        return false;
+    }
 }
 
 
