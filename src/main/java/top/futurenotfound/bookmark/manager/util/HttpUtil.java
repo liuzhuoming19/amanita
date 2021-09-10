@@ -5,7 +5,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.StringUtils;
 import top.futurenotfound.bookmark.manager.env.Constant;
 
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class HttpUtil {
      * @return true可访问 false不可访问
      */
     public static boolean isReachable(String url) {
-        return StringUtils.isNotEmpty(get(url));
+        return StringUtil.isNotEmpty(get(url));
     }
 
     public static String get(String url) {

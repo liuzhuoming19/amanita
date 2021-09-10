@@ -20,7 +20,7 @@ public enum ExceptionCode {
     USERNAME_WAS_USED("00101", "用户名已被使用"),
     USERNAME_OR_PASSWORD_NOT_MATCH("00102", "用户名或者密码不匹配"),
 
-    
+
     CONTENT_EXTRACTOR_FAIL("10001", "网页正文抽取失败"),
     ;
 

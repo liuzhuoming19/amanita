@@ -6,13 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import top.futurenotfound.bookmark.manager.entity.WebExcerptInfo;
 import top.futurenotfound.bookmark.manager.entity.WebHtmlInfo;
 import top.futurenotfound.bookmark.manager.env.Constant;
+import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,7 +50,7 @@ public class ContentExtractorHelper {
                 News news = ContentExtractor.getNewsByUrl(url);
                 title = news.getTitle();
                 String content = news.getContent();
-                if (!StringUtils.isEmpty(content)) {
+                if (!StringUtil.isEmpty(content)) {
                     excerpt = content.substring(0, 197) + "...";
                 }
             } catch (Exception ignored) {
