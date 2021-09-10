@@ -35,6 +35,10 @@ create table if not exists bookmark
     note varchar
 (
     500
+),
+    first_image_url varchar
+(
+    500
 )
     );
 
@@ -180,7 +184,8 @@ create table if not exists user_setting
     allow_excerpt_page_archive integer default 0 not null,
     allow_bookmark_change_history integer default 0 not null,
     create_time timestamp default CURRENT_TIMESTAMP,
-    update_time timestamp default CURRENT_TIMESTAMP
+    update_time timestamp default CURRENT_TIMESTAMP,
+    allow_full_page_archive integer default 0 not null
     );
 
 comment

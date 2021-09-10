@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.entity;
+package top.futurenotfound.bookmark.manager.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -80,4 +80,7 @@ public class Bookmark {
     @TableField(value = "update_time")
     private Date updateTime;
 
+    @TableField(value = "first_image_url")
+    @ApiModelProperty("网页首图")
+    private String firstImageUrl;
 }

@@ -8,15 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import top.futurenotfound.bookmark.manager.entity.TokenEntity;
-import top.futurenotfound.bookmark.manager.entity.User;
+import top.futurenotfound.bookmark.manager.domain.TokenEntity;
+import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.JwtHelper;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
-
-import java.util.Objects;
 
 /**
  * 登陆controller
@@ -36,7 +34,7 @@ public class LoginController {
     public ResponseEntity<TokenEntity> login(@RequestParam String username,
                                              @RequestParam String password) {
         User user = userService.getByUsername(username);
-        if (user == null || Objects.equals(PasswordUtil.compute(password, username), user.getPassword())) {
+        if (user == null || PasswordUtil.verify(password, user.getPassword())) {
             throw new AuthException(ExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         }
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());

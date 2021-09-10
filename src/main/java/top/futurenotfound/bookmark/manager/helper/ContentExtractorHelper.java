@@ -9,8 +9,8 @@ import okhttp3.Response;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import top.futurenotfound.bookmark.manager.entity.WebExcerptInfo;
-import top.futurenotfound.bookmark.manager.entity.WebHtmlInfo;
+import top.futurenotfound.bookmark.manager.domain.WebExcerptInfo;
+import top.futurenotfound.bookmark.manager.domain.WebHtmlInfo;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
@@ -32,7 +32,7 @@ public class ContentExtractorHelper {
      *
      * @param origUrl 原始url
      */
-    public static WebExcerptInfo excerpt(String url) {
+    public WebExcerptInfo excerpt(String url) {
         URL uRL;
         try {
             uRL = new URL(url);
@@ -79,7 +79,7 @@ public class ContentExtractorHelper {
      *
      * @param origUrl 原始url
      */
-    public static WebHtmlInfo html(String url) {
+    public WebHtmlInfo html(String url) {
         URL uRL;
         try {
             uRL = new URL(url);

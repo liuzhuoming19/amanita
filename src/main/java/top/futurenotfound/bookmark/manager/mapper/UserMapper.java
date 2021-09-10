@@ -1,7 +1,7 @@
 package top.futurenotfound.bookmark.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import top.futurenotfound.bookmark.manager.entity.User;
+import top.futurenotfound.bookmark.manager.domain.User;
 
 /**
  * 用户

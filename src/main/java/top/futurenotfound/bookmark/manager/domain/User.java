@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.entity;
+package top.futurenotfound.bookmark.manager.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import top.futurenotfound.bookmark.manager.env.UserRoleType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -63,5 +64,5 @@ public class User {
      */
     @TableField(exist = false)
     @ApiModelProperty("角色标识")
-    private String role = "USER";
+    private String role = UserRoleType.USER.getName();
 }

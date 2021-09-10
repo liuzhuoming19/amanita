@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.bookmark.manager.entity.User;
+import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.domain.UserSetting;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.mapper.UserMapper;
 import top.futurenotfound.bookmark.manager.service.UserService;
+import top.futurenotfound.bookmark.manager.service.UserSettingService;
+import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
 import java.io.Serializable;
@@ -22,6 +25,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
+    private final UserSettingService userSettingService;
 
     @Override
     public User getById(Serializable id) {
@@ -39,14 +43,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public boolean saveOrUpdate(User entity) {
-        User user = getByUsername(entity.getUsername());
-        if (user != null && !Objects.equals(user.getId(), entity.getId())) {
+        User userDb = getByUsername(entity.getUsername());
+        if (userDb != null && !Objects.equals(userDb.getId(), entity.getId())) {
             throw new BookmarkException(ExceptionCode.USERNAME_WAS_USED);
         }
-        String password = PasswordUtil.compute(entity.getPassword(), entity.getUsername());
+        String password = PasswordUtil.compute(entity.getPassword());
         //重设加密后的密码
         entity.setPassword(password);
-        return super.saveOrUpdate(entity);
+        entity.setUpdateTime(DateUtil.now());
+        super.saveOrUpdate(entity);
+        //同时生成用户设置 UserSetting 的数据库数据
+        UserSetting userSetting = new UserSetting();
+        userSetting.setUserId(entity.getId());
+        userSettingService.save(userSetting);
+        return true;
     }
 
     @Override

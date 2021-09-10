@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.entity;
+package top.futurenotfound.bookmark.manager.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

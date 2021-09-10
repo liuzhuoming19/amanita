@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
-import top.futurenotfound.bookmark.manager.entity.TokenEntity;
+import top.futurenotfound.bookmark.manager.domain.TokenEntity;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.StringUtil;

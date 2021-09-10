@@ -1,4 +1,4 @@
-package top.futurenotfound.bookmark.manager.entity;
+package top.futurenotfound.bookmark.manager.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
