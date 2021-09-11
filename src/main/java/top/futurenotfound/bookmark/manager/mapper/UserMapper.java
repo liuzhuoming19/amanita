@@ -6,7 +6,7 @@ import top.futurenotfound.bookmark.manager.domain.User;
 /**
  * 用户
  *
- * @Entity top.futurenotfound.bookmark.manager.domain.User
+ * @author liuzhuoming
  */
 public interface UserMapper extends BaseMapper<User> {
 

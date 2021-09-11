@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户设置
+ * 书签标签
  *
  * @author liuzhuoming
  */
-@TableName(value = "user_setting")
+@TableName(value = "bookmark_tag")
 @Data
-public class UserSetting implements Serializable {
+public class BookmarkTag implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
@@ -24,25 +24,15 @@ public class UserSetting implements Serializable {
     @TableId(value = "id")
     private String id;
     /**
-     * 用户id
+     * 书签id
      */
-    @TableField(value = "user_id")
-    private String userId;
+    @TableField(value = "bookmark_id")
+    private String bookmarkId;
     /**
-     * 是否开启页面简述存档
+     * 标签id
      */
-    @TableField(value = "allow_excerpt_page_archive")
-    private Boolean allowExcerptPageArchive;
-    /**
-     * 是否开启页面全文存档
-     */
-    @TableField(value = "allow_full_page_archive")
-    private Boolean allowFullPageArchive;
-    /**
-     * 是否开启书签修改历史（开启后可回溯历史）
-     */
-    @TableField(value = "allow_bookmark_change_history")
-    private Boolean allowBookmarkChangeHistory;
+    @TableField(value = "tag_id")
+    private String tagId;
     /**
      *
      */

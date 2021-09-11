@@ -15,9 +15,9 @@ import java.util.Date;
 /**
  * 用户
  * <p>
- * user为postgresql关键字，做表名使用需使用双引号括起来
+ * user 为 postgresql 关键字，做表名使用需使用双引号括起来
  *
- * @TableName user
+ * @author liuzhuoming
  */
 @TableName(value = "\"user\"")
 @Data

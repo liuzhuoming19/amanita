@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户设置
+ * 用户管理员
  *
  * @author liuzhuoming
  */
-@TableName(value = "user_setting")
+@TableName(value = "user_admin")
 @Data
-public class UserSetting implements Serializable {
+public class UserAdmin implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
@@ -28,21 +28,6 @@ public class UserSetting implements Serializable {
      */
     @TableField(value = "user_id")
     private String userId;
-    /**
-     * 是否开启页面简述存档
-     */
-    @TableField(value = "allow_excerpt_page_archive")
-    private Boolean allowExcerptPageArchive;
-    /**
-     * 是否开启页面全文存档
-     */
-    @TableField(value = "allow_full_page_archive")
-    private Boolean allowFullPageArchive;
-    /**
-     * 是否开启书签修改历史（开启后可回溯历史）
-     */
-    @TableField(value = "allow_bookmark_change_history")
-    private Boolean allowBookmarkChangeHistory;
     /**
      *
      */

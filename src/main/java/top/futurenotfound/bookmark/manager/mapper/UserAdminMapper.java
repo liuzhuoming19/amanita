@@ -1,14 +1,14 @@
 package top.futurenotfound.bookmark.manager.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import top.futurenotfound.bookmark.manager.domain.Bookmark;
+import top.futurenotfound.bookmark.manager.domain.UserAdmin;
 
 /**
- * 书签
+ * 用户管理员
  *
  * @author liuzhuoming
  */
-public interface BookmarkMapper extends BaseMapper<Bookmark> {
+public interface UserAdminMapper extends BaseMapper<UserAdmin> {
 
 }
 

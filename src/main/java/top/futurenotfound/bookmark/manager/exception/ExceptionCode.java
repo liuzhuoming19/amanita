@@ -19,6 +19,9 @@ public enum ExceptionCode {
     TOKEN_EXPIRED("00100", "token不存在或者已过期"),
     USERNAME_WAS_USED("00101", "用户名已被使用"),
     USERNAME_OR_PASSWORD_NOT_MATCH("00102", "用户名或者密码不匹配"),
+    USER_NOT_EXIST("00103", "用户不存在"),
+
+    BOOKMARK_NOT_EXIST("00200", "书签不存在"),
 
 
     CONTENT_EXTRACTOR_FAIL("10001", "网页正文抽取失败"),

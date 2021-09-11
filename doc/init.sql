@@ -434,3 +434,33 @@ create unique index if not exists order_id_uindex
 create unique index if not exists order_order_no_uindex
     on "order" (order_no);
 
+create table if not exists user_admin
+(
+    id varchar
+(
+    36
+) default gen_random_uuid
+(
+) not null
+    constraint user_admin_pk
+    primary key,
+    user_id varchar
+(
+    36
+) not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
+    );
+
+comment
+on table user_admin is '用户管理员';
+
+comment
+on column user_admin.user_id is '用户id';
+
+alter table user_admin
+    owner to root;
+
+create unique index if not exists user_admin_user_id_uindex
+    on user_admin (user_id);
+

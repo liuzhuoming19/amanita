@@ -10,11 +10,12 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 书签
  *
- * @TableName bookmark
+ * @author liuzhuoming
  */
 @TableName(value = "bookmark")
 @Data
@@ -83,4 +84,8 @@ public class Bookmark {
     @TableField(value = "first_image_url")
     @ApiModelProperty("网页首图")
     private String firstImageUrl;
+
+    @TableField(exist = false)
+    @ApiModelProperty("标签组")
+    private List<Tag> tags;
 }

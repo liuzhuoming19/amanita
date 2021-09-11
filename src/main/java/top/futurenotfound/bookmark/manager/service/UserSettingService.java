@@ -5,6 +5,8 @@ import top.futurenotfound.bookmark.manager.domain.UserSetting;
 
 /**
  * 用户设置
+ *
+ * @author liuzhuoming
  */
 public interface UserSettingService extends IService<UserSetting> {
 

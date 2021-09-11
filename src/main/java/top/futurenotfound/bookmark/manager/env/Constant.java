@@ -13,4 +13,6 @@ public interface Constant {
 
     String HTTPS = "https://";
     String HTTP = "http://";
+
+    String DESENSITIZED_PASSWORD = "******";
 }
