@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.futurenotfound.bookmark.manager.domain.Vip;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
  *
  * @author liuzhuoming
  */
-public interface VipService extends IService<Vip> {
+public interface VipService {
 
     List<Vip> listByUserId(String userId);
 }

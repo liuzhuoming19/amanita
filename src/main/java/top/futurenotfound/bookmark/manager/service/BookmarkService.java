@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
 
 import java.util.List;
@@ -10,7 +9,13 @@ import java.util.List;
  *
  * @author liuzhuoming
  */
-public interface BookmarkService extends IService<Bookmark> {
+public interface BookmarkService {
 
     List<Bookmark> listByUserId(String userId);
+
+    Bookmark getById(String id);
+
+    boolean updateById(Bookmark bookmark);
+
+    boolean save(Bookmark bookmark);
 }

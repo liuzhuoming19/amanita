@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.futurenotfound.bookmark.manager.domain.UserSetting;
 
 /**
@@ -8,7 +7,7 @@ import top.futurenotfound.bookmark.manager.domain.UserSetting;
  *
  * @author liuzhuoming
  */
-public interface UserSettingService extends IService<UserSetting> {
+public interface UserSettingService {
 
     UserSetting getByUserId(String userId);
 }

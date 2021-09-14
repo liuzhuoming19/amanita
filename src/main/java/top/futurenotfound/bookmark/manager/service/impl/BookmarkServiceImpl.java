@@ -18,7 +18,6 @@ import top.futurenotfound.bookmark.manager.service.UserSettingService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -93,7 +92,7 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
     }
 
     @Override
-    public Bookmark getById(Serializable id) {
+    public Bookmark getById(String id) {
         Bookmark bookmark = super.getById(id);
         if (bookmark == null) {
             throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);

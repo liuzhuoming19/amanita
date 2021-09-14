@@ -17,7 +17,6 @@ import top.futurenotfound.bookmark.manager.service.UserSettingService;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -33,7 +32,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private final UserRoleService userRoleService;
 
     @Override
-    public User getById(Serializable id) {
+    public User getById(String id) {
         User user = super.getById(id);
         if (user == null) {
             throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);

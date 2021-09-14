@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.futurenotfound.bookmark.manager.domain.User;
 
 /**
@@ -8,7 +7,8 @@ import top.futurenotfound.bookmark.manager.domain.User;
  *
  * @author liuzhuoming
  */
-public interface UserService extends IService<User> {
+public interface UserService {
+    User getById(String id);
 
     User getByUsername(String username);
 
@@ -20,4 +20,6 @@ public interface UserService extends IService<User> {
      * @param username 用户名
      */
     User getDesensitizedUserByUserName(String username);
+
+    boolean saveOrUpdate(User entity);
 }
