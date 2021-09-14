@@ -41,7 +41,9 @@ public class LoginFilter implements Filter {
             "/v3/**",
             //other
             //登录
-            "/login/**"
+            "/login/**",
+            //重定向
+            "/redirect/**"
     );
     /**
      * 登录后无需权限配置就可以访问

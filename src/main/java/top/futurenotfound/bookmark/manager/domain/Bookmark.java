@@ -55,13 +55,13 @@ public class Bookmark {
      */
     @TableField(value = "is_read")
     @ApiModelProperty("是否已读")
-    private Boolean isRead;
+    private Integer isRead;
     /**
      * 是否失效链接
      */
     @TableField(value = "is_invalid")
     @ApiModelProperty("是否失效链接")
-    private Boolean isInvalid;
+    private Integer isInvalid;
     /**
      * 数据绑定的用户id
      */

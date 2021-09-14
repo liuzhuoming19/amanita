@@ -33,10 +33,10 @@ public class RedirectController {
         if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
         if (!Objects.equals(bookmark.getUserId(), user.getId()))
             throw new AuthException(ExceptionCode.NO_AUTH);
-        if (!bookmark.getIsRead()) {
+        if (bookmark.getIsRead() == 0) {
             bookmark.setUpdateTime(DateUtil.now());
-            bookmark.setLastReadTime(DateUtil.now());
-            bookmark.setIsRead(true);
+            bookmark.setFirstReadTime(DateUtil.now());
+            bookmark.setIsRead(1);
             bookmarkService.updateById(bookmark);
         }
         return "redirect:" + bookmark.getUrl();

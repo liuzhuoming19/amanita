@@ -32,17 +32,17 @@ public class UserSetting implements Serializable {
      * 是否开启页面简述存档
      */
     @TableField(value = "allow_excerpt_page_archive")
-    private Boolean allowExcerptPageArchive;
+    private Integer allowExcerptPageArchive;
     /**
      * 是否开启页面全文存档
      */
     @TableField(value = "allow_full_page_archive")
-    private Boolean allowFullPageArchive;
+    private Integer allowFullPageArchive;
     /**
      * 是否开启书签修改历史（开启后可回溯历史）
      */
     @TableField(value = "allow_bookmark_change_history")
-    private Boolean allowBookmarkChangeHistory;
+    private Integer allowBookmarkChangeHistory;
     /**
      *
      */

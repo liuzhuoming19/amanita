@@ -44,10 +44,11 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
         WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
 
+        //TODO 是否使其可自定义
         bookmark.setFirstImageUrl(webExcerptInfo.getFirstImageUrl());
         bookmark.setHost(webExcerptInfo.getHost());
 
-        if (userSetting.getAllowExcerptPageArchive()) {
+        if (userSetting.getAllowExcerptPageArchive() == 1) {
             bookmark.setExcerpt(webExcerptInfo.getExcerpt());
         }
         if (StringUtil.isEmpty(bookmark.getTitle())) {
@@ -55,10 +56,10 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         }
 
         if (UserRoleType.VIP.getName().equals(user.getRole())) {
-            if (userSetting.getAllowFullPageArchive()) {
+            if (userSetting.getAllowFullPageArchive() == 1) {
                 //TODO 全文特殊保存
             }
-            if (userSetting.getAllowBookmarkChangeHistory()) {
+            if (userSetting.getAllowBookmarkChangeHistory() == 1) {
                 //TODO 保存修改历史
             }
         }
@@ -75,7 +76,7 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         bookmark.setFirstImageUrl(webExcerptInfo.getFirstImageUrl());
         bookmark.setHost(webExcerptInfo.getHost());
 
-        if (userSetting.getAllowExcerptPageArchive()) {
+        if (userSetting.getAllowExcerptPageArchive() == 1) {
             bookmark.setExcerpt(webExcerptInfo.getExcerpt());
         }
         if (StringUtil.isEmpty(bookmark.getTitle())) {
@@ -83,14 +84,14 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         }
 
         if (UserRoleType.VIP.getName().equals(user.getRole())) {
-            if (userSetting.getAllowFullPageArchive()) {
+            if (userSetting.getAllowFullPageArchive() == 1) {
                 //TODO 全文特殊保存
             }
-            if (userSetting.getAllowBookmarkChangeHistory()) {
+            if (userSetting.getAllowBookmarkChangeHistory() == 1) {
                 //TODO 保存修改历史
             }
         }
-        return super.save(bookmark);
+        return super.updateById(bookmark);
     }
 
     @Override

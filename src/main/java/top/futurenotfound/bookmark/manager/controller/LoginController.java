@@ -34,7 +34,7 @@ public class LoginController {
     public ResponseEntity<TokenEntity> login(@RequestParam String username,
                                              @RequestParam String password) {
         User user = userService.getByUsername(username);
-        if (user == null || PasswordUtil.verify(password, user.getPassword())) {
+        if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
             throw new AuthException(ExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         }
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());
