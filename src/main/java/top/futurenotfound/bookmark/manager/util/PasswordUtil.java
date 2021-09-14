@@ -9,12 +9,10 @@ import cn.hutool.crypto.digest.BCrypt;
  */
 public class PasswordUtil {
     private PasswordUtil() {
-
     }
 
     public static String compute(String origPassword) {
-        String salt = BCrypt.gensalt(4);
-        return BCrypt.hashpw(origPassword, salt);
+        return BCrypt.hashpw(origPassword);
     }
 
     public static boolean verify(String origPassword, String encryptPassword) {

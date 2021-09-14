@@ -23,6 +23,7 @@ public enum ExceptionCode {
     NO_AUTH("00104", "当前登陆用户无该数据权限"),
 
     BOOKMARK_NOT_EXIST("00200", "书签不存在"),
+    BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),
 
 
     CONTENT_EXTRACTOR_FAIL("10001", "网页正文抽取失败"),

@@ -17,4 +17,6 @@ public interface BookmarkService {
     boolean updateById(Bookmark bookmark);
 
     boolean save(Bookmark bookmark);
+
+    boolean deleteById(String id);
 }

@@ -41,6 +41,10 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
         String url = bookmark.getUrl();
         User user = CurrentLoginUser.get();
         bookmark.setUserId(user.getId());
+
+        if (isExistByUserIdAndUrl(user.getId(), url))
+            throw new BookmarkException(ExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
+
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
         WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
 
@@ -67,9 +71,18 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
     }
 
     @Override
+    public boolean deleteById(String id) {
+        return super.removeById(id);
+    }
+
+    @Override
     public boolean updateById(Bookmark bookmark) {
         String url = bookmark.getUrl();
         User user = CurrentLoginUser.get();
+
+        if (isExistByUserIdAndUrl(user.getId(), url))
+            throw new BookmarkException(ExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
+
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
         WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
 
@@ -116,6 +129,13 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
             bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
         }
         return bookmarkPage;
+    }
+
+    private boolean isExistByUserIdAndUrl(String userId, String url) {
+        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Bookmark::getUserId, userId)
+                .eq(Bookmark::getUrl, url);
+        return this.baseMapper.selectOne(queryWrapper) != null;
     }
 }
 
