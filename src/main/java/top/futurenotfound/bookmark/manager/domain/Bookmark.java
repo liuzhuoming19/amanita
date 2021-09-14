@@ -51,17 +51,17 @@ public class Bookmark {
     @ApiModelProperty("页面摘要")
     private String excerpt;
     /**
-     * 是否已读 0否 1是
+     * 是否已读
      */
     @TableField(value = "is_read")
-    @ApiModelProperty("是否已读 0否 1是")
-    private Integer isRead;
+    @ApiModelProperty("是否已读")
+    private Boolean isRead;
     /**
-     * 是否失效链接 0否 1是
+     * 是否失效链接
      */
     @TableField(value = "is_invalid")
-    @ApiModelProperty("是否失效链接 0否 1是")
-    private Integer isInvalid;
+    @ApiModelProperty("是否失效链接")
+    private Boolean isInvalid;
     /**
      * 数据绑定的用户id
      */
@@ -84,6 +84,9 @@ public class Bookmark {
     @TableField(value = "first_image_url")
     @ApiModelProperty("网页首图")
     private String firstImageUrl;
+    @TableField(value = "first_read_time")
+    @ApiModelProperty("第一次阅读时间")
+    private Date firstReadTime;
 
     @TableField(exist = false)
     @ApiModelProperty("标签组")

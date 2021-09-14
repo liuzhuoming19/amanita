@@ -10,6 +10,7 @@ import top.futurenotfound.bookmark.manager.mapper.TagMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
                 .map(BookmarkTag::getTagId)
                 .distinct()
                 .collect(Collectors.toList());
+        if (tagIds.isEmpty()) return Collections.emptyList();
         return this.listByIds(tagIds);
     }
 }

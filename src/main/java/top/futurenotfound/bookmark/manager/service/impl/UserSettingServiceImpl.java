@@ -26,6 +26,11 @@ public class UserSettingServiceImpl extends ServiceImpl<UserSettingMapper, UserS
         queryWrapper.eq(UserSetting::getUserId, userId);
         return this.baseMapper.selectOne(queryWrapper);
     }
+
+    @Override
+    public boolean save(UserSetting entity) {
+        return super.save(entity);
+    }
 }
 
 

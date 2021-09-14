@@ -1,8 +1,7 @@
 package top.futurenotfound.bookmark.manager.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
-
-import java.util.List;
 
 /**
  * 书签
@@ -11,7 +10,7 @@ import java.util.List;
  */
 public interface BookmarkService {
 
-    List<Bookmark> listByUserId(String userId);
+    Page<Bookmark> pageByUserId(String userId, Page<Bookmark> page);
 
     Bookmark getById(String id);
 

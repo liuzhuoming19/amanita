@@ -37,7 +37,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user == null) {
             throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
         }
-        UserRoleType userRoleType = userRoleService.getByUsername(user.getUsername());
+        UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
         return user;
     }
@@ -56,8 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //同时生成用户设置 UserSetting 的数据库数据
         UserSetting userSetting = new UserSetting();
         userSetting.setUserId(entity.getId());
-        userSettingService.save(userSetting);
-        return true;
+        return userSettingService.save(userSetting);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (user == null) {
             throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
         }
-        UserRoleType userRoleType = userRoleService.getByUsername(user.getUsername());
+        UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
         return user;
     }

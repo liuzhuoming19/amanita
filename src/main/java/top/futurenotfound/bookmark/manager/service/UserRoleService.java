@@ -9,5 +9,5 @@ import top.futurenotfound.bookmark.manager.env.UserRoleType;
  */
 public interface UserRoleService {
 
-    UserRoleType getByUsername(String username);
+    UserRoleType getByUserId(String userId);
 }

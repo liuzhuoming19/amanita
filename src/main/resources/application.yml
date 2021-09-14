@@ -19,3 +19,5 @@ mybatis-plus:
 custom:
   token-expire-time-amount: 24
   token-expire-time-unit: hours
+
+  redirect-url: "https://futurenotfound.top/redirect?bookmarkId="

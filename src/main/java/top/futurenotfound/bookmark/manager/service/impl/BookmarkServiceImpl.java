@@ -1,10 +1,12 @@
 package top.futurenotfound.bookmark.manager.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.*;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
@@ -12,7 +14,6 @@ import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.ContentExtractorHelper;
 import top.futurenotfound.bookmark.manager.mapper.BookmarkMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
-import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.service.UserSettingService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
@@ -33,12 +34,13 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
     private final ContentExtractorHelper contentExtractorHelper;
     private final UserSettingService userSettingService;
     private final TagService tagService;
-    private final BookmarkTagService bookmarkTagService;
+    private CustomProperties customProperties;
 
     @Override
     public boolean save(Bookmark bookmark) {
         String url = bookmark.getUrl();
         User user = CurrentLoginUser.get();
+        bookmark.setUserId(user.getId());
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
         WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
 
@@ -60,7 +62,7 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
                 //TODO 保存修改历史
             }
         }
-        return this.baseMapper.insert(bookmark) == 1;
+        return super.save(bookmark);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
                 //TODO 保存修改历史
             }
         }
-        return this.baseMapper.updateById(bookmark) == 1;
+        return super.save(bookmark);
     }
 
     @Override
@@ -103,15 +105,16 @@ public class BookmarkServiceImpl extends ServiceImpl<BookmarkMapper, Bookmark>
     }
 
     @Override
-    public List<Bookmark> listByUserId(String userId) {
+    public Page<Bookmark> pageByUserId(String userId, Page<Bookmark> page) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Bookmark::getUserId, userId);
-        List<Bookmark> list = this.baseMapper.selectList(queryWrapper);
-        for (Bookmark bookmark : list) {
+        Page<Bookmark> bookmarkPage = super.page(page, queryWrapper);
+        for (Bookmark bookmark : bookmarkPage.getRecords()) {
             List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
             bookmark.setTags(tags);
+            bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
         }
-        return list;
+        return bookmarkPage;
     }
 }
 

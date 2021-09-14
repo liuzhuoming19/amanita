@@ -24,5 +24,8 @@ public class CustomProperties {
      */
     private Long tokenExpireTimeAmount;
 
-
+    /**
+     * 书签重定向url
+     */
+    private String redirectUrl;
 }
