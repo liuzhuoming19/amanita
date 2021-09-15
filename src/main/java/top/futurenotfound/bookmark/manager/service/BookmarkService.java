@@ -2,6 +2,7 @@ package top.futurenotfound.bookmark.manager.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
+import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
 
 /**
  * 书签
@@ -14,9 +15,16 @@ public interface BookmarkService {
 
     Bookmark getById(String id);
 
-    boolean updateById(Bookmark bookmark);
+    void updateById(Bookmark bookmark);
 
-    boolean save(Bookmark bookmark);
+    void save(Bookmark bookmark);
 
-    boolean deleteById(String id);
+    void deleteById(String id);
+
+    /**
+     * 通过dto构建书签
+     *
+     * @param bookmarkDTO dto
+     */
+    Bookmark mkBookmark(BookmarkDTO bookmarkDTO);
 }

@@ -11,5 +11,5 @@ public interface UserSettingService {
 
     UserSetting getByUserId(String userId);
 
-    boolean save(UserSetting userSetting);
+    void save(UserSetting userSetting);
 }

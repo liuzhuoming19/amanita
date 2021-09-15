@@ -1,7 +1,6 @@
 package top.futurenotfound.bookmark.manager.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.domain.User;
@@ -14,7 +13,6 @@ import top.futurenotfound.bookmark.manager.mapper.UserMapper;
 import top.futurenotfound.bookmark.manager.service.UserRoleService;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.service.UserSettingService;
-import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
 import java.util.Objects;
@@ -26,14 +24,14 @@ import java.util.Objects;
  */
 @Service
 @AllArgsConstructor
-public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-        implements UserService {
+public class UserServiceImpl implements UserService {
+    private final UserMapper userMapper;
     private final UserSettingService userSettingService;
     private final UserRoleService userRoleService;
 
     @Override
     public User getById(String id) {
-        User user = super.getById(id);
+        User user = userMapper.selectById(id);
         if (user == null) {
             throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
         }
@@ -43,27 +41,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public boolean saveOrUpdate(User entity) {
-        User userDb = getByUsername(entity.getUsername());
-        if (userDb != null && !Objects.equals(userDb.getId(), entity.getId())) {
+    public void save(User user) {
+        User userDb = getByUsername(user.getUsername());
+        if (userDb != null && !Objects.equals(userDb.getId(), user.getId())) {
             throw new BookmarkException(ExceptionCode.USERNAME_WAS_USED);
         }
-        String password = PasswordUtil.compute(entity.getPassword());
+        String password = PasswordUtil.compute(user.getPassword());
         //重设加密后的密码
-        entity.setPassword(password);
-        entity.setUpdateTime(DateUtil.now());
-        super.saveOrUpdate(entity);
+        user.setPassword(password);
+        userMapper.insert(user);
         //同时生成用户设置 UserSetting 的数据库数据
         UserSetting userSetting = new UserSetting();
-        userSetting.setUserId(entity.getId());
-        return userSettingService.save(userSetting);
+        userSetting.setUserId(user.getId());
+        userSettingService.save(userSetting);
     }
 
     @Override
     public User getByUsername(String username) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getUsername, username);
-        User user = this.getOne(userLambdaQueryWrapper);
+        User user = userMapper.selectOne(userLambdaQueryWrapper);
         if (user == null) {
             throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
         }

@@ -8,9 +8,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
+import top.futurenotfound.bookmark.manager.domain.Tag;
 import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.exception.AuthException;
+import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
+import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
+import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 书签controller
@@ -23,37 +34,72 @@ import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 @AllArgsConstructor
 public class BookmarkController {
     private final BookmarkService bookmarkService;
+    private final TagService tagService;
+    private final BookmarkTagService bookmarkTagService;
 
     @GetMapping("{id}")
     @ApiOperation("详情")
     public ResponseEntity<Bookmark> get(@PathVariable String id) {
-        return ResponseEntity.ok(bookmarkService.getById(id));
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!Objects.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+
+        return ResponseEntity.ok(bookmark);
     }
 
     @GetMapping
     @ApiOperation("分页列表")
     public ResponseEntity<Page<Bookmark>> page(@RequestParam(defaultValue = "10") Integer pageSize,
                                                @RequestParam(defaultValue = "1") Integer pageNum) {
-        if (pageSize > 100) pageSize = 100;
         User user = CurrentLoginUser.get();
+        if (pageSize > 100) pageSize = 100;
         return ResponseEntity.ok(bookmarkService.pageByUserId(user.getId(), new Page<>(pageNum, pageSize)));
     }
 
     @PostMapping
     @ApiOperation("新增")
-    public ResponseEntity<Boolean> add(Bookmark bookmark) {
-        return ResponseEntity.ok(bookmarkService.save(bookmark));
+    public ResponseEntity<Bookmark> add(@RequestBody @Valid BookmarkDTO bookmarkDTO) {
+        Bookmark bookmark = bookmarkService.mkBookmark(bookmarkDTO);
+
+        List<String> tagNames = bookmarkDTO.getTagNames();
+        if (tagNames != null && !tagNames.isEmpty()) {
+            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
+            bookmarkTagService.bindingBookmarkAndTags(bookmark.getId(), tagList);
+        }
+        bookmarkService.save(bookmark);
+        return ResponseEntity.ok(bookmark);
     }
 
     @PutMapping
     @ApiOperation("更新")
-    public ResponseEntity<Boolean> update(Bookmark bookmark) {
-        return ResponseEntity.ok(bookmarkService.updateById(bookmark));
+    public ResponseEntity<Bookmark> update(@RequestBody @Valid BookmarkDTO bookmarkDTO) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmarkDb = bookmarkService.getById(bookmarkDTO.getId());
+
+        if (!Objects.equals(user.getId(), bookmarkDb.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+
+        Bookmark bookmark = bookmarkService.mkBookmark(bookmarkDTO);
+        List<String> tagNames = bookmarkDTO.getTagNames();
+        if (tagNames != null && !tagNames.isEmpty()) {
+            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
+            bookmarkTagService.bindingBookmarkAndTags(bookmark.getId(), tagList);
+        }
+        bookmarkService.updateById(bookmark);
+        return ResponseEntity.ok(bookmark);
     }
 
     @DeleteMapping("{id}")
     @ApiOperation("删除")
-    public ResponseEntity<Boolean> delete(@PathVariable String id) {
-        return ResponseEntity.ok(bookmarkService.deleteById(id));
+    public ResponseEntity<Bookmark> delete(@PathVariable String id) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!Objects.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+
+        bookmarkService.deleteById(id);
+        return ResponseEntity.ok(bookmark);
     }
 }

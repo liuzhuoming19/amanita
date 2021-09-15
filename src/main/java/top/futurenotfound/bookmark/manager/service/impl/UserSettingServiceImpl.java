@@ -1,7 +1,6 @@
 package top.futurenotfound.bookmark.manager.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,19 +16,19 @@ import top.futurenotfound.bookmark.manager.service.UserSettingService;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserSettingServiceImpl extends ServiceImpl<UserSettingMapper, UserSetting>
-        implements UserSettingService {
+public class UserSettingServiceImpl implements UserSettingService {
+    private final UserSettingMapper userSettingMapper;
 
     @Override
     public UserSetting getByUserId(String userId) {
         LambdaQueryWrapper<UserSetting> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserSetting::getUserId, userId);
-        return this.baseMapper.selectOne(queryWrapper);
+        return userSettingMapper.selectOne(queryWrapper);
     }
 
     @Override
-    public boolean save(UserSetting entity) {
-        return super.save(entity);
+    public void save(UserSetting userSetting) {
+        userSettingMapper.insert(userSetting);
     }
 }
 

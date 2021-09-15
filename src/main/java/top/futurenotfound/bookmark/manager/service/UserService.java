@@ -21,5 +21,7 @@ public interface UserService {
      */
     User getDesensitizedUserByUserName(String username);
 
-    boolean saveOrUpdate(User entity);
+    void save(User user);
+
+    //TODO 缺少更新用户信息
 }

@@ -1,5 +1,9 @@
 package top.futurenotfound.bookmark.manager.env;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
  * 常量
  *
@@ -15,4 +19,19 @@ public interface Constant {
     String HTTP = "http://";
 
     String DESENSITIZED_PASSWORD = "******";
+
+
+    List<String> COLOR_CODES = new ArrayList<>(
+            Set.of(
+                    //TODO 待补充颜色代码
+                    "#0aa344",
+                    "#70f3ff",
+                    "#ffa631",
+                    "#9d2933",
+                    "#eacd76",
+                    "#549688",
+                    "#725e82",
+                    "#395260"
+            ));
+
 }
