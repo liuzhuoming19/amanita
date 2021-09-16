@@ -39,7 +39,9 @@ create table if not exists bookmark
     first_image_url varchar
 (
     500
-)
+),
+    first_read_time timestamp,
+    is_starred integer default 0 not null
     );
 
 comment
@@ -65,6 +67,12 @@ on column bookmark.is_invalid is '是否失效链接 0否 1是';
 
 comment
 on column bookmark.user_id is '数据绑定的用户id';
+
+comment
+on column bookmark.first_read_time is '第一次阅读时间';
+
+comment
+on column bookmark.is_starred is '是否收藏 0否 1是';
 
 alter table bookmark
     owner to root;
@@ -254,6 +262,8 @@ create table if not exists bookmark_tag
     id varchar
 (
     36
+) default gen_random_uuid
+(
 ) not null
     constraint bookmark_tag_pk
     primary key,

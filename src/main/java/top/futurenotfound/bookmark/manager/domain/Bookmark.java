@@ -54,13 +54,13 @@ public class Bookmark {
      * 是否已读
      */
     @TableField(value = "is_read")
-    @ApiModelProperty("是否已读")
+    @ApiModelProperty("是否已读 0否 1是")
     private Integer isRead;
     /**
      * 是否失效链接
      */
     @TableField(value = "is_invalid")
-    @ApiModelProperty("是否失效链接")
+    @ApiModelProperty("是否失效链接 0否 1是")
     private Integer isInvalid;
     /**
      * 数据绑定的用户id
@@ -87,6 +87,9 @@ public class Bookmark {
     @TableField(value = "first_read_time")
     @ApiModelProperty("第一次阅读时间")
     private Date firstReadTime;
+    @TableField(value = "is_starred")
+    @ApiModelProperty("是否收藏 0否 1是")
+    private Integer isStarred;
 
     @TableField(exist = false)
     @ApiModelProperty("标签组")
