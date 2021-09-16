@@ -27,4 +27,5 @@ public interface BookmarkService {
      * @param bookmarkDTO dto
      */
     Bookmark mkBookmark(BookmarkDTO bookmarkDTO);
+
 }

@@ -51,7 +51,11 @@ public class ContentExtractorHelper {
                 title = news.getTitle();
                 String content = news.getContent();
                 if (!StringUtil.isEmpty(content)) {
-                    excerpt = content.substring(0, 197) + "...";
+                    if (content.length() >= 200) {
+                        excerpt = content.substring(0, 197) + "...";
+                    } else {
+                        excerpt = content;
+                    }
                 }
             } catch (Exception ignored) {
             }

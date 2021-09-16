@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.domain.BookmarkTag;
 import top.futurenotfound.bookmark.manager.domain.Tag;
+import top.futurenotfound.bookmark.manager.env.RedisKey;
+import top.futurenotfound.bookmark.manager.helper.RedisHelper;
 import top.futurenotfound.bookmark.manager.mapper.TagMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
@@ -14,6 +16,7 @@ import top.futurenotfound.bookmark.manager.util.RandomColorCodeUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
     private final BookmarkTagService bookmarkTagService;
     private final TagMapper tagMapper;
+    private final RedisHelper<Tag> tagRedisHelper;
 
     @Override
     public List<Tag> listByBookmarkId(String bookmarkId) {
@@ -47,15 +51,23 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Tag getByName(String name) {
-        LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Tag::getName, name);
-        Tag tagDb = tagMapper.selectOne(queryWrapper);
-        if (tagDb != null) return tagDb;
-        Tag tag = new Tag();
-        tag.setName(name);
-        tag.setColor(RandomColorCodeUtil.next());
-        tagMapper.insert(tag);
+    public synchronized Tag getByName(String name) {
+        String tagKey = RedisKey.TAG + name;
+        Tag tag = tagRedisHelper.get(tagKey);
+        if (tag == null) {
+            LambdaQueryWrapper<Tag> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Tag::getName, name);
+            Tag tagDb = tagMapper.selectOne(queryWrapper);
+            if (tagDb != null) {
+                tag = tagDb;
+            } else {
+                tag = new Tag();
+                tag.setName(name);
+                tag.setColor(RandomColorCodeUtil.next());
+                tagMapper.insert(tag);
+            }
+            tagRedisHelper.setEx(tagKey, tag, 30L, TimeUnit.MINUTES);
+        }
         return tag;
     }
 }

@@ -108,6 +108,13 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setNote(note);
         bookmark.setUserId(user.getId());
 
+        if (!UserRoleType.VIP.getName().equals(user.getRole())) {
+            //普通用户可收藏书签上限
+            if (count(user.getId()) >= 50) {
+                throw new BookmarkException(ExceptionCode.USER_HAS_MAX_BOOKMARKS);
+            }
+        }
+
         if (isExistByUserIdAndUrl(user.getId(), url))
             throw new BookmarkException(ExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
 
@@ -138,6 +145,12 @@ public class BookmarkServiceImpl implements BookmarkService {
             }
         }
         return bookmark;
+    }
+
+    private Long count(String userId) {
+        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Bookmark::getUserId, userId);
+        return bookmarkMapper.selectCount(queryWrapper);
     }
 }
 

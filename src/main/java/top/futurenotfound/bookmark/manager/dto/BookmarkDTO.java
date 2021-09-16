@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class BookmarkDTO {
     @ApiModelProperty("id")
     private String id;
     @ApiModelProperty("书签地址")
+    @NotEmpty
     private String url;
     @ApiModelProperty("书签标题")
     private String title;

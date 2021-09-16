@@ -21,6 +21,7 @@ public enum ExceptionCode {
     USERNAME_OR_PASSWORD_NOT_MATCH("00102", "用户名或者密码不匹配"),
     USER_NOT_EXIST("00103", "用户不存在"),
     NO_AUTH("00104", "当前登陆用户无该数据操作权限"),
+    USER_HAS_MAX_BOOKMARKS("00105", "普通用户已达到最大书签上限"),
 
     BOOKMARK_NOT_EXIST("00200", "书签不存在"),
     BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),
