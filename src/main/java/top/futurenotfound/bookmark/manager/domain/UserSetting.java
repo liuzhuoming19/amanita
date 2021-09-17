@@ -44,6 +44,11 @@ public class UserSetting implements Serializable {
     @TableField(value = "allow_bookmark_change_history")
     private Integer allowBookmarkChangeHistory;
     /**
+     * 是否开启精简版页面
+     */
+    @TableField(value = "allow_page_lite")
+    private Integer allowPageLite;
+    /**
      *
      */
     @TableField(value = "create_time")
