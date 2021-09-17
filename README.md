@@ -1,6 +1,6 @@
-# BOOKMARK MANAGER
+# 毒蘑菇🍄(BOOKMARK)
 
-书签管理及API
+> 毒蘑菇即 poisonous mushrooms。
 
 | |组件|
 |---|---|
