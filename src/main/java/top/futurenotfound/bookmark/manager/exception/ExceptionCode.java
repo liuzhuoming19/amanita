@@ -22,6 +22,11 @@ public enum ExceptionCode {
     USER_NOT_EXIST("00103", "用户不存在"),
     NO_AUTH("00104", "当前登陆用户无该数据操作权限"),
     USER_HAS_MAX_BOOKMARKS("00105", "普通用户已达到最大书签上限"),
+    SOURCE_IS_REQUIRED("00106", "请求来源不能为空"),
+    UNKNOWN_SOURCE("00107", "未知请求来源"),
+    ACCESS_EXPIRED("00108", "access不存在或者已过期"),
+    TOKEN_ERROR("00109", "token错误"),
+    NO_ROUTE_ERROR("00110", "无效请求"),
 
     BOOKMARK_NOT_EXIST("00200", "书签不存在"),
     BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),

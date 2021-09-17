@@ -30,7 +30,7 @@ public class ContentExtractorHelper {
     /**
      * 网页正文摘要抽取
      *
-     * @param origUrl 原始url
+     * @param url url
      */
     public WebExcerptInfo excerpt(String url) {
         URL uRL;
@@ -79,9 +79,9 @@ public class ContentExtractorHelper {
     }
 
     /**
-     * 网页html代码抽取
+     * 网页全文html代码抽取
      *
-     * @param origUrl 原始url
+     * @param url url
      */
     public WebHtmlInfo html(String url) {
         URL uRL;

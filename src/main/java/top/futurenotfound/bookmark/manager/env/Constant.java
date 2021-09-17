@@ -20,6 +20,10 @@ public interface Constant {
 
     String DESENSITIZED_PASSWORD = "******";
 
+    String HEADER_AUTHORIZATION = "Authorization";
+    String HEADER_SOURCE = "Source";
+    String HEADER_ACCESS_KEY = "AccessKey";
+    String HEADER_ACCESS_SECRET = "AccessSecret";
 
     List<String> COLOR_CODES = new ArrayList<>(
             Set.of(

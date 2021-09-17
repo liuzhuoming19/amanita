@@ -9,11 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.RequestParameterBuilder;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import top.futurenotfound.bookmark.manager.env.Constant;
 
 import java.util.List;
 
@@ -44,6 +46,7 @@ public class Knife4jConfiguration {
                         .build())
                 //分组名称
                 .groupName("0.x.x版本")
+                .globalRequestParameters(parameters())
                 .select()
                 //这里指定Controller扫描包路径
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class)
@@ -56,7 +59,7 @@ public class Knife4jConfiguration {
 
     private List<SecurityScheme> securitySchemes() {
         return Lists.newArrayList(
-                new ApiKey("Authorization", "Authorization", "header"));
+                new ApiKey(Constant.HEADER_AUTHORIZATION, Constant.HEADER_AUTHORIZATION, "header"));
     }
 
     private List<SecurityContext> securityContexts() {
@@ -65,14 +68,24 @@ public class Knife4jConfiguration {
                         .securityReferences(defaultAuth())
                         .operationSelector(
                                 operationContext -> !operationContext.requestMappingPattern().matches("/login/*")
-                                        && !operationContext.requestMappingPattern().matches("/access/*")
                         )
                         .build()
         );
     }
 
-    List<SecurityReference> defaultAuth() {
+    private List<SecurityReference> defaultAuth() {
         return Lists.newArrayList(
-                new SecurityReference("Authorization", ArrayUtils.toArray(new AuthorizationScope("global", "accessEverything"))));
+                new SecurityReference(Constant.HEADER_AUTHORIZATION, ArrayUtils.toArray(new AuthorizationScope("global", "accessEverything"))));
+    }
+
+    private List<RequestParameter> parameters() {
+        return List.of(
+                new RequestParameterBuilder()
+                        .name(Constant.HEADER_SOURCE)
+                        .description("请求来源 WEB网站请求 API外部api请求")
+                        .in(ParameterType.HEADER)
+                        .required(true)
+                        .build()
+        );
     }
 }

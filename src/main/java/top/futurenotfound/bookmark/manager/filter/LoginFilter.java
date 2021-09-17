@@ -1,13 +1,23 @@
 package top.futurenotfound.bookmark.manager.filter;
 
+import com.google.common.base.Charsets;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import top.futurenotfound.bookmark.manager.domain.Access;
 import top.futurenotfound.bookmark.manager.domain.User;
+import top.futurenotfound.bookmark.manager.env.Constant;
+import top.futurenotfound.bookmark.manager.env.SourceType;
+import top.futurenotfound.bookmark.manager.env.UserRoleType;
+import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.JwtHelper;
+import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
+import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -15,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * 登录过滤器
@@ -25,11 +37,12 @@ import java.util.List;
 @Order(2)
 @WebFilter(filterName = "LoginFilter", urlPatterns = "/*")
 @RequiredArgsConstructor
+@Slf4j
 public class LoginFilter implements Filter {
     /**
      * 不登录就可以访问
      */
-    private static final List<String> NOT_LOGIN_URL = List.of(
+    private static final List<String> NOT_LOGIN_ALLOW_URL_LIST = List.of(
             //static
             "/favicon.ico",
             "/css/**",
@@ -46,24 +59,37 @@ public class LoginFilter implements Filter {
     /**
      * 登录后无需权限配置就可以访问
      */
-    private static final List<String> LOGIN_URL = List.of(
-
-    );
-    /**
-     * 登录后USER权限配置就可以访问
-     */
-    private static final List<String> USER_URL = List.of(
+    private static final List<String> LOGIN_ALLOW_URL_LIST = List.of(
             "/bookmark/**",
             "/user/**",
             "/tag/**"
     );
     /**
-     * 登录后VIP权限配置就可以访问
+     * 登录后USER及以上权限配置就可以访问
      */
-    private static final List<String> VIP_URL = List.of(
-            "/access/**"
+    private static final List<String> USER_ALLOW_URL_LIST = List.of(
     );
+    /**
+     * 登录后VIP及以上权限配置就可以访问
+     */
+    private static final List<String> VIP_ALLOW_URL_LIST = List.of(
+    );
+    /**
+     * 登录后ADMIN及以上权限配置就可以访问
+     */
+    private static final List<String> ADMIN_ALLOW_URL_LIST = List.of(
+    );
+    /**
+     * 角色路由策略
+     */
+    private static final Map<UserRoleType, Predicate<String>> ROLE_STRATEGY = Map.of(
+            UserRoleType.USER, (String url) -> matchAny(USER_ALLOW_URL_LIST, url),
+            UserRoleType.VIP, (String url) -> matchAny(VIP_ALLOW_URL_LIST, url),
+            UserRoleType.ADMIN, (String url) -> matchAny(ADMIN_ALLOW_URL_LIST, url)
+    );
+
     private final UserService userService;
+    private final AccessService accessService;
     private final JwtHelper jwtHelper;
 
     /**
@@ -88,29 +114,85 @@ public class LoginFilter implements Filter {
 
         String url = req.getRequestURI();
 
-        if (matchAny(NOT_LOGIN_URL, url)) {
+        if (matchAny(NOT_LOGIN_ALLOW_URL_LIST, url)) {
             chain.doFilter(req, resp);
             return;
         }
 
-        String token = req.getHeader("Authorization");
-        //jwt解析
-        try {
-            String username = jwtHelper.getUsername(token);
-            User user = userService.getByUsername(username);
-            //存入线程变量
-            CurrentLoginUser.set(user);
-        } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        String source = req.getHeader(Constant.HEADER_SOURCE);
+
+        if (StringUtil.isEmpty(source)) {
+            sendError(resp, ExceptionCode.SOURCE_IS_REQUIRED);
             return;
         }
 
-        if (matchAny(LOGIN_URL, url)) {
+        SourceType sourceType = SourceType.getByName(source);
+
+        if (sourceType == null) {
+            sendError(resp, ExceptionCode.UNKNOWN_SOURCE);
+            return;
+        }
+
+        //当前认证用户
+        User user;
+        switch (sourceType) {
+            case WEB: //jwt验证
+                String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
+                if (StringUtil.isEmpty(token)) {
+                    sendError(resp, ExceptionCode.TOKEN_EXPIRED);
+                    return;
+                }
+                try {
+                    String username = jwtHelper.getUsername(token);
+                    user = userService.getByUsername(username);
+                } catch (Exception e) {
+                    sendError(resp, ExceptionCode.TOKEN_ERROR);
+                    return;
+                }
+                break;
+            case API: //access验证
+                String accessKey = req.getHeader(Constant.HEADER_ACCESS_KEY);
+                String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
+                Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
+                if (access == null) {
+                    sendError(resp, ExceptionCode.ACCESS_EXPIRED);
+                    return;
+                }
+                user = userService.getById(access.getUserId());
+                break;
+            default:
+                sendError(resp, ExceptionCode.UNKNOWN_SOURCE);
+                return;
+        }
+
+        if (user == null) {
+            sendError(resp, ExceptionCode.USER_NOT_EXIST);
+            return;
+        }
+        //存入线程变量
+        CurrentLoginUser.set(user);
+
+        if (matchAny(LOGIN_ALLOW_URL_LIST, url)) {
             chain.doFilter(req, resp);
             return;
         }
 
-        chain.doFilter(request, response);
+        UserRoleType userRoleType = UserRoleType.getByName(user.getRole());
+        //针对角色的路由策略模式
+        if (ROLE_STRATEGY.get(userRoleType).test(url)) {
+            chain.doFilter(req, resp);
+            return;
+        }
+
+        //不符合任意一种匹配规则则视为无效请求
+        sendError(resp, ExceptionCode.NO_ROUTE_ERROR);
+    }
+
+    private void sendError(HttpServletResponse resp, ExceptionCode exceptionCode) throws IOException {
+        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        resp.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+        resp.setCharacterEncoding(Charsets.UTF_8.name());
+        resp.getWriter().print(exceptionCode);
     }
 }
 

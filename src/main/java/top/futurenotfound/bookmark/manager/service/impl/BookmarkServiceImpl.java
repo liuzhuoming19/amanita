@@ -109,8 +109,8 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setUserId(user.getId());
 
         if (!UserRoleType.VIP.getName().equals(user.getRole())) {
-            //普通用户可收藏书签上限
-            if (count(user.getId()) >= 50) {
+            //普通用户可收藏书签数量上限
+            if (count(user.getId()) >= customProperties.getUserBookmarkNumMax()) {
                 throw new BookmarkException(ExceptionCode.USER_HAS_MAX_BOOKMARKS);
             }
         }

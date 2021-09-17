@@ -2,6 +2,7 @@ package top.futurenotfound.bookmark.manager.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
@@ -11,6 +12,10 @@ import java.util.Date;
  * @author liuzhuoming
  */
 public class DateUtil {
+    public final static DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+
     private DateUtil() {
     }
 
@@ -34,4 +39,11 @@ public class DateUtil {
         return localDateTimeToDate(localDateTime);
     }
 
+    public static String format(Date date, DateTimeFormatter formatter) {
+        return formatter.format(dateToLocalDateTime(date));
+    }
+
+    public static String formatNow(DateTimeFormatter formatter) {
+        return DateUtil.format(DateUtil.now(), formatter);
+    }
 }

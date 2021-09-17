@@ -35,14 +35,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> bookmarkExceptionHandler(BookmarkException e) {
         return ResponseEntity
                 .badRequest()
-                .body(e.getExceptionCode().toString());
+                .body(StrFormatter.format("书签异常: {}", e.getExceptionCode().toString()));
     }
 
     @ExceptionHandler(value = AuthException.class)
     public ResponseEntity<String> authExceptionHandler(AuthException e) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(e.getExceptionCode().toString());
+                .body(StrFormatter.format("认证异常: {}", e.getExceptionCode().toString()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

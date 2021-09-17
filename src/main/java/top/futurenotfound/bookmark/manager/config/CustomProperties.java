@@ -28,4 +28,22 @@ public class CustomProperties {
      * 书签重定向url
      */
     private String redirectUrl;
+
+    /**
+     * 普通用户书签数量上限
+     */
+    private Integer userBookmarkNumMax;
+
+    /**
+     * access key长度
+     */
+    private Integer accessKeyLength;
+    /**
+     * access secret长度
+     */
+    private Integer accessSecretLength;
+    /**
+     * access过期天数
+     */
+    private Integer accessExpireDays;
 }

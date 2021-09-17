@@ -24,7 +24,7 @@ public class RedisHelper<T> {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void expire(String key, Long timeAmount, TimeUnit timeUnit) {
+    private void expire(String key, Long timeAmount, TimeUnit timeUnit) {
         redisTemplate.expire(key, timeAmount, timeUnit);
     }
 
