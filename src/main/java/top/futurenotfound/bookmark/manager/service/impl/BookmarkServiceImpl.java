@@ -124,7 +124,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setFirstImageUrl(webExcerptInfo.getFirstImageUrl());
         bookmark.setHost(webExcerptInfo.getHost());
 
-        if (userSetting.getAllowExcerptPageArchive() == 1) {
+        if (userSetting.getAllowFeatExcerptPageArchive() == 1) {
             bookmark.setExcerpt(webExcerptInfo.getExcerpt());
         }
         if (StringUtil.isEmpty(title)) {
@@ -137,10 +137,10 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
 
         if (UserRoleType.VIP.getName().equals(user.getRole())) {
-            if (userSetting.getAllowFullPageArchive() == 1) {
+            if (userSetting.getAllowFeatFullPageArchive() == 1) {
                 //TODO 全文特殊保存
             }
-            if (userSetting.getAllowBookmarkChangeHistory() == 1) {
+            if (userSetting.getAllowFeatBookmarkChangeHistory() == 1) {
                 //TODO 保存修改历史
             }
         }
