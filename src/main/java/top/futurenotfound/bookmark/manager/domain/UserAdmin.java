@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,12 +14,7 @@ import java.util.Date;
  */
 @TableName(value = "user_admin")
 @Data
-public class UserAdmin implements Serializable {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-    /**
-     *
-     */
+public class UserAdmin {
     @TableId(value = "id")
     private String id;
     /**
@@ -28,14 +22,9 @@ public class UserAdmin implements Serializable {
      */
     @TableField(value = "user_id")
     private String userId;
-    /**
-     *
-     */
+
     @TableField(value = "create_time")
     private Date createTime;
-    /**
-     *
-     */
     @TableField(value = "update_time")
     private Date updateTime;
 }

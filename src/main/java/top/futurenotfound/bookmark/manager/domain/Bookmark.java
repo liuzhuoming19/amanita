@@ -76,11 +76,6 @@ public class Bookmark {
     @ApiModelProperty("书签笔记")
     private String note;
 
-    @TableField(value = "create_time")
-    private Date createTime;
-    @TableField(value = "update_time")
-    private Date updateTime;
-
     @TableField(value = "first_image_url")
     @ApiModelProperty("网页首图")
     private String firstImageUrl;
@@ -90,6 +85,11 @@ public class Bookmark {
     @TableField(value = "is_starred")
     @ApiModelProperty("是否收藏 0否 1是")
     private Integer isStarred;
+
+    @TableField(value = "create_time")
+    private Date createTime;
+    @TableField(value = "update_time")
+    private Date updateTime;
 
     @TableField(exist = false)
     @ApiModelProperty("标签组")

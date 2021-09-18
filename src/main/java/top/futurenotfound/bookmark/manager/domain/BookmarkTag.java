@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,12 +14,7 @@ import java.util.Date;
  */
 @TableName(value = "bookmark_tag")
 @Data
-public class BookmarkTag implements Serializable {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-    /**
-     *
-     */
+public class BookmarkTag {
     @TableId(value = "id")
     private String id;
     /**
@@ -33,14 +27,9 @@ public class BookmarkTag implements Serializable {
      */
     @TableField(value = "tag_id")
     private String tagId;
-    /**
-     *
-     */
+
     @TableField(value = "create_time")
     private Date createTime;
-    /**
-     *
-     */
     @TableField(value = "update_time")
     private Date updateTime;
 }

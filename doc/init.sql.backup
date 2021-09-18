@@ -1,21 +1,21 @@
 create table if not exists bookmark
 (
-    id              varchar(36) default gen_random_uuid() not null
+    id              varchar(32)         not null
         constraint bookmark_pk
             primary key,
-    url             varchar(255)                          not null,
-    title           varchar(255)                          not null,
-    create_time     timestamp   default CURRENT_TIMESTAMP,
-    update_time     timestamp   default CURRENT_TIMESTAMP,
-    host            varchar(127)                          not null,
+    url             varchar(255)        not null,
+    title           varchar(255)        not null,
+    create_time     timestamp default CURRENT_TIMESTAMP,
+    update_time     timestamp default CURRENT_TIMESTAMP,
+    host            varchar(127)        not null,
     excerpt         varchar(500),
-    is_read         integer     default 0                 not null,
-    is_invalid      integer     default 0                 not null,
-    user_id         varchar(36)                           not null,
+    is_read         integer   default 0 not null,
+    is_invalid      integer   default 0 not null,
+    user_id         varchar(32)         not null,
     note            varchar(500),
     first_image_url varchar(500),
     first_read_time timestamp,
-    is_starred      integer     default 0                 not null
+    is_starred      integer   default 0 not null
 );
 
 comment on table bookmark is '书签';
@@ -43,15 +43,15 @@ alter table bookmark
 
 create table if not exists "user"
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32)  not null
         constraint user_pk
             primary key,
-    username    varchar(15)                           not null,
-    email       varchar(50)                           not null,
-    password    varchar(100)                          not null,
-    enabled     integer     default 1,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
+    username    varchar(15)  not null,
+    email       varchar(50)  not null,
+    password    varchar(100) not null,
+    enabled     integer   default 1,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
 );
 
 comment on table "user" is '用户';
@@ -67,25 +67,25 @@ comment on column "user".enabled is '是否可用（0不可用 1可用）';
 alter table "user"
     owner to postgres;
 
-create unique index if not exists user_id_uindex
-    on "user" (id);
-
 create unique index if not exists user_email_uindex
     on "user" (email);
 
 create unique index if not exists user_name_uindex
     on "user" (username);
 
+create unique index if not exists user_id_uindex
+    on "user" (id);
+
 create table if not exists user_access
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32) not null
         constraint user_access_pk
             primary key,
-    user_id     varchar(36)                           not null,
-    access_key  varchar(50)                           not null,
-    secret_key  varchar(50)                           not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
+    user_id     varchar(32) not null,
+    access_key  varchar(50) not null,
+    secret_key  varchar(50) not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
 );
 
 comment on table user_access is '用户access';
@@ -104,16 +104,16 @@ create unique index if not exists user_access_id_uindex
 
 create table if not exists user_setting
 (
-    id                                 varchar(36) default gen_random_uuid() not null
+    id                                 varchar(32)         not null
         constraint user_setting_pk
             primary key,
-    user_id                            varchar(36)                           not null,
-    allow_feat_excerpt_page_archive    integer     default 0                 not null,
-    allow_feat_bookmark_change_history integer     default 0                 not null,
-    create_time                        timestamp   default CURRENT_TIMESTAMP,
-    update_time                        timestamp   default CURRENT_TIMESTAMP,
-    allow_feat_full_page_archive       integer     default 0                 not null,
-    allow_ui_page_lite                 integer     default 0                 not null
+    user_id                            varchar(32)         not null,
+    allow_feat_excerpt_page_archive    integer   default 0 not null,
+    allow_feat_bookmark_change_history integer   default 0 not null,
+    create_time                        timestamp default CURRENT_TIMESTAMP,
+    update_time                        timestamp default CURRENT_TIMESTAMP,
+    allow_feat_full_page_archive       integer   default 0 not null,
+    allow_ui_page_lite                 integer   default 0 not null
 );
 
 comment on table user_setting is '用户设置';
@@ -139,13 +139,13 @@ create unique index if not exists user_setting_user_id_uindex
 
 create table if not exists tag
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32) not null
         constraint tag_pk
             primary key,
-    name        varchar(15)                           not null,
-    color       varchar(15)                           not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
+    name        varchar(15) not null,
+    color       varchar(15) not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
 );
 
 comment on table tag is '标签';
@@ -157,21 +157,21 @@ comment on column tag.color is '标签颜色';
 alter table tag
     owner to postgres;
 
-create unique index if not exists tag_id_uindex
-    on tag (id);
-
 create unique index if not exists tag_name_uindex
     on tag (name);
 
+create unique index if not exists tag_id_uindex
+    on tag (id);
+
 create table if not exists bookmark_tag
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32) not null
         constraint bookmark_tag_pk
             primary key,
-    bookmark_id varchar(36)                           not null,
-    tag_id      varchar(36)                           not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
+    bookmark_id varchar(32) not null,
+    tag_id      varchar(32) not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
 );
 
 comment on table bookmark_tag is '书签标签';
@@ -188,15 +188,15 @@ create unique index if not exists bookmark_tag_id_uindex
 
 create table if not exists vip
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32) not null
         constraint vip_pk
             primary key,
-    user_id     varchar(36)                           not null,
-    start_time  timestamp                             not null,
-    end_time    timestamp                             not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP,
-    type        integer                               not null
+    user_id     varchar(32) not null,
+    start_time  timestamp   not null,
+    end_time    timestamp   not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP,
+    type        integer     not null
 );
 
 comment on table vip is '会员';
@@ -215,39 +215,13 @@ alter table vip
 create unique index if not exists vip_id_uindex
     on vip (id);
 
-create table if not exists vip_level
-(
-    id          varchar(36) default gen_random_uuid() not null
-        constraint vip_level_pk
-            primary key,
-    user_id     varchar(36)                           not null,
-    level       integer     default 0                 not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
-);
-
-comment on table vip_level is '会员等级';
-
-comment on column vip_level.user_id is '用户id';
-
-comment on column vip_level.level is '会员等级';
-
-alter table vip_level
-    owner to postgres;
-
-create unique index if not exists vip_level_id_uindex
-    on vip_level (id);
-
-create unique index if not exists vip_level_user_id_uindex
-    on vip_level (user_id);
-
 create table if not exists "order"
 (
-    id             varchar(36)   not null
+    id             varchar(32)   not null
         constraint order_pk
             primary key,
     order_no       varchar(20)   not null,
-    user_id        varchar(36)   not null,
+    user_id        varchar(32)   not null,
     amount         numeric       not null,
     discount       numeric   default 0,
     paid_amount    numeric       not null,
@@ -282,20 +256,20 @@ comment on column "order".payment_type is '支付类型 ALIPAY支付宝 WXPAY微
 alter table "order"
     owner to postgres;
 
-create unique index if not exists order_id_uindex
-    on "order" (id);
-
 create unique index if not exists order_order_no_uindex
     on "order" (order_no);
 
+create unique index if not exists order_id_uindex
+    on "order" (id);
+
 create table if not exists user_admin
 (
-    id          varchar(36) default gen_random_uuid() not null
+    id          varchar(32) not null
         constraint user_admin_pk
             primary key,
-    user_id     varchar(36)                           not null,
-    create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
+    user_id     varchar(32) not null,
+    create_time timestamp default CURRENT_TIMESTAMP,
+    update_time timestamp default CURRENT_TIMESTAMP
 );
 
 comment on table user_admin is '用户管理员';
@@ -310,12 +284,12 @@ create unique index if not exists user_admin_user_id_uindex
 
 create table if not exists access
 (
-    id          varchar(36)                         not null
+    id          varchar(32)                         not null
         constraint access_pk
             primary key,
     key         varchar(50)                         not null,
     secret      varchar(50)                         not null,
-    user_id     varchar(36)                         not null,
+    user_id     varchar(32)                         not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP not null
 );

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -15,12 +14,7 @@ import java.util.Date;
  */
 @TableName(value = "user_setting")
 @Data
-public class UserSetting implements Serializable {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-    /**
-     *
-     */
+public class UserSetting {
     @TableId(value = "id")
     private String id;
     /**
@@ -51,14 +45,8 @@ public class UserSetting implements Serializable {
     @TableField(value = "allow_ui_page_lite")
     private Integer allowUiPageLite;
 
-    /**
-     *
-     */
     @TableField(value = "create_time")
     private Date createTime;
-    /**
-     *
-     */
     @TableField(value = "update_time")
     private Date updateTime;
 }

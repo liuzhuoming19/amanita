@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import top.futurenotfound.bookmark.manager.env.VipType;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,12 +17,7 @@ import java.util.Date;
  */
 @TableName(value = "vip")
 @Data
-public class Vip implements Serializable {
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-    /**
-     *
-     */
+public class Vip {
     @TableId(value = "id")
     private String id;
     /**
@@ -42,21 +36,16 @@ public class Vip implements Serializable {
     @TableField(value = "end_time")
     private Date endTime;
     /**
-     *
-     */
-    @TableField(value = "create_time")
-    private Date createTime;
-    /**
-     *
-     */
-    @TableField(value = "update_time")
-    private Date updateTime;
-
-    /**
      * 会员类型
      *
      * @see VipType
      */
     @TableField(value = "type")
     private Integer type;
+
+    @TableField(value = "create_time")
+    private Date createTime;
+    @TableField(value = "update_time")
+    private Date updateTime;
+
 }
