@@ -17,8 +17,6 @@ public interface BookmarkService {
 
     void updateById(Bookmark bookmark);
 
-    void save(Bookmark bookmark);
-
     void deleteById(String id);
 
     /**
@@ -26,6 +24,7 @@ public interface BookmarkService {
      *
      * @param bookmarkDTO dto
      */
-    Bookmark mkBookmark(BookmarkDTO bookmarkDTO);
+    Bookmark save(BookmarkDTO bookmarkDTO);
 
+    Bookmark update(BookmarkDTO bookmarkDTO);
 }

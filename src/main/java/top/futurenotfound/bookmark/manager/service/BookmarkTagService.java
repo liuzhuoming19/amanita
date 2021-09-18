@@ -4,6 +4,7 @@ import top.futurenotfound.bookmark.manager.domain.BookmarkTag;
 import top.futurenotfound.bookmark.manager.domain.Tag;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 书签标签
@@ -23,4 +24,8 @@ public interface BookmarkTagService {
     void bindingBookmarkAndTags(String bookmarkId, List<Tag> tags);
 
     void deleteById(String id);
+
+    void deleteByIds(Set<String> ids);
+
+    void deleteByBookmarkId(String bookmarkId);
 }

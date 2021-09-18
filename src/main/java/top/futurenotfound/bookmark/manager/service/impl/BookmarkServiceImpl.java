@@ -14,6 +14,7 @@ import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.ContentExtractorHelper;
 import top.futurenotfound.bookmark.manager.mapper.BookmarkMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
+import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.service.UserSettingService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
@@ -35,15 +36,11 @@ public class BookmarkServiceImpl implements BookmarkService {
     private final UserSettingService userSettingService;
     private final TagService tagService;
     private final CustomProperties customProperties;
+    private final BookmarkTagService bookmarkTagService;
 
     @Override
     public void deleteById(String id) {
         bookmarkMapper.deleteById(id);
-    }
-
-    @Override
-    public void save(Bookmark bookmark) {
-        bookmarkMapper.insert(bookmark);
     }
 
     @Override
@@ -94,7 +91,44 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public Bookmark mkBookmark(BookmarkDTO bookmarkDTO) {
+    public Bookmark save(BookmarkDTO bookmarkDTO) {
+        Bookmark bookmark = mkBookmark(bookmarkDTO);
+
+        bookmarkMapper.insert(bookmark);
+
+        List<String> tagNames = bookmarkDTO.getTagNames();
+        if (tagNames != null && !tagNames.isEmpty()) {
+            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
+            bookmarkTagService.bindingBookmarkAndTags(bookmark.getId(), tagList);
+            bookmark.setTags(tagList);
+        }
+        return bookmark;
+    }
+
+    @Override
+    public Bookmark update(BookmarkDTO bookmarkDTO) {
+        Bookmark bookmark = mkBookmark(bookmarkDTO);
+
+        bookmarkMapper.updateById(bookmark);
+
+        //先删除全部，再插入
+        bookmarkTagService.deleteByBookmarkId(bookmarkDTO.getId());
+        List<String> tagNames = bookmarkDTO.getTagNames();
+        if (tagNames != null && !tagNames.isEmpty()) {
+            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
+            bookmarkTagService.bindingBookmarkAndTags(bookmarkDTO.getId(), tagList);
+            bookmark.setTags(tagList);
+        }
+        return bookmark;
+    }
+
+    private Long count(String userId) {
+        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Bookmark::getUserId, userId);
+        return bookmarkMapper.selectCount(queryWrapper);
+    }
+
+    private Bookmark mkBookmark(BookmarkDTO bookmarkDTO) {
         User user = CurrentLoginUser.get();
 
         String url = bookmarkDTO.getUrl();
@@ -145,12 +179,6 @@ public class BookmarkServiceImpl implements BookmarkService {
             }
         }
         return bookmark;
-    }
-
-    private Long count(String userId) {
-        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Bookmark::getUserId, userId);
-        return bookmarkMapper.selectCount(queryWrapper);
     }
 }
 

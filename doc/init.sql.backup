@@ -39,7 +39,7 @@ comment on column bookmark.first_read_time is '第一次阅读时间';
 comment on column bookmark.is_starred is '是否收藏 0否 1是';
 
 alter table bookmark
-    owner to root;
+    owner to postgres;
 
 create table if not exists "user"
 (
@@ -65,7 +65,7 @@ comment on column "user".password is '密码（加密后）';
 comment on column "user".enabled is '是否可用（0不可用 1可用）';
 
 alter table "user"
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists user_id_uindex
     on "user" (id);
@@ -97,37 +97,39 @@ comment on column user_access.access_key is 'AccessKey';
 comment on column user_access.secret_key is 'SecretKey';
 
 alter table user_access
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists user_access_id_uindex
     on user_access (id);
 
 create table if not exists user_setting
 (
-    id                            varchar(36) default gen_random_uuid() not null
+    id                                 varchar(36) default gen_random_uuid() not null
         constraint user_setting_pk
             primary key,
-    user_id                       varchar(36)                           not null,
-    allow_excerpt_page_archive    integer     default 0                 not null,
-    allow_bookmark_change_history integer     default 0                 not null,
-    create_time                   timestamp   default CURRENT_TIMESTAMP,
-    update_time                   timestamp   default CURRENT_TIMESTAMP,
-    allow_full_page_archive       integer     default 0                 not null,
-    allow_page_lite               integer     default 0                 not null
+    user_id                            varchar(36)                           not null,
+    allow_feat_excerpt_page_archive    integer     default 0                 not null,
+    allow_feat_bookmark_change_history integer     default 0                 not null,
+    create_time                        timestamp   default CURRENT_TIMESTAMP,
+    update_time                        timestamp   default CURRENT_TIMESTAMP,
+    allow_feat_full_page_archive       integer     default 0                 not null,
+    allow_ui_page_lite                 integer     default 0                 not null
 );
 
 comment on table user_setting is '用户设置';
 
 comment on column user_setting.user_id is '用户id';
 
-comment on column user_setting.allow_excerpt_page_archive is '是否开启页面简述存档（0否 1是）';
+comment on column user_setting.allow_feat_excerpt_page_archive is '是否开启页面简述存档（0否 1是）';
 
-comment on column user_setting.allow_bookmark_change_history is '是否开启书签修改历史（开启后可回溯历史）(0否 1是)';
+comment on column user_setting.allow_feat_bookmark_change_history is '是否开启书签修改历史（开启后可回溯历史）(0否 1是)';
 
-comment on column user_setting.allow_page_lite is '是否开启精简版页面 0否 1是';
+comment on column user_setting.allow_feat_full_page_archive is '是否允许全文存档 0否 1是';
+
+comment on column user_setting.allow_ui_page_lite is '是否开启精简版页面 0否 1是';
 
 alter table user_setting
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists user_setting_id_uindex
     on user_setting (id);
@@ -153,7 +155,7 @@ comment on column tag.name is '标签名称';
 comment on column tag.color is '标签颜色';
 
 alter table tag
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists tag_id_uindex
     on tag (id);
@@ -179,7 +181,7 @@ comment on column bookmark_tag.bookmark_id is '书签id';
 comment on column bookmark_tag.tag_id is '标签id';
 
 alter table bookmark_tag
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists bookmark_tag_id_uindex
     on bookmark_tag (id);
@@ -208,7 +210,7 @@ comment on column vip.end_time is '会员结束时间';
 comment on column vip.type is '会员类型 0赞助 1免费 2支付';
 
 alter table vip
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists vip_id_uindex
     on vip (id);
@@ -231,7 +233,7 @@ comment on column vip_level.user_id is '用户id';
 comment on column vip_level.level is '会员等级';
 
 alter table vip_level
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists vip_level_id_uindex
     on vip_level (id);
@@ -278,7 +280,7 @@ comment on column "order".order_info is '支付信息（json）';
 comment on column "order".payment_type is '支付类型 ALIPAY支付宝 WXPAY微信支付 OTHER其他';
 
 alter table "order"
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists order_id_uindex
     on "order" (id);
@@ -301,7 +303,7 @@ comment on table user_admin is '用户管理员';
 comment on column user_admin.user_id is '用户id';
 
 alter table user_admin
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists user_admin_user_id_uindex
     on user_admin (user_id);
@@ -327,7 +329,7 @@ comment on column access.secret is 'access secret';
 comment on column access.user_id is '用户id';
 
 alter table access
-    owner to root;
+    owner to postgres;
 
 create unique index if not exists access_id_uindex
     on access (id);

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
-import top.futurenotfound.bookmark.manager.domain.Tag;
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
@@ -20,7 +19,6 @@ import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -61,14 +59,7 @@ public class BookmarkController {
     @PostMapping
     @ApiOperation("新增")
     public ResponseEntity<Bookmark> add(@RequestBody @Valid BookmarkDTO bookmarkDTO) {
-        Bookmark bookmark = bookmarkService.mkBookmark(bookmarkDTO);
-
-        List<String> tagNames = bookmarkDTO.getTagNames();
-        if (tagNames != null && !tagNames.isEmpty()) {
-            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
-            bookmarkTagService.bindingBookmarkAndTags(bookmark.getId(), tagList);
-        }
-        bookmarkService.save(bookmark);
+        Bookmark bookmark = bookmarkService.save(bookmarkDTO);
         return ResponseEntity.ok(bookmark);
     }
 
@@ -80,13 +71,7 @@ public class BookmarkController {
 
         if (!Objects.equals(user.getId(), bookmarkDb.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
 
-        Bookmark bookmark = bookmarkService.mkBookmark(bookmarkDTO);
-        List<String> tagNames = bookmarkDTO.getTagNames();
-        if (tagNames != null && !tagNames.isEmpty()) {
-            List<Tag> tagList = tagService.mkTags(bookmarkDTO.getTagNames());
-            bookmarkTagService.bindingBookmarkAndTags(bookmark.getId(), tagList);
-        }
-        bookmarkService.updateById(bookmark);
+        Bookmark bookmark = bookmarkService.update(bookmarkDTO);
         return ResponseEntity.ok(bookmark);
     }
 

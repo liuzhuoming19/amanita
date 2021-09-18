@@ -9,6 +9,7 @@ import top.futurenotfound.bookmark.manager.mapper.BookmarkTagMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 书签标签
@@ -40,6 +41,18 @@ public class BookmarkTagServiceImpl implements BookmarkTagService {
     @Override
     public void deleteById(String id) {
         bookmarkTagMapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteByIds(Set<String> ids) {
+        bookmarkTagMapper.deleteBatchIds(ids);
+    }
+
+    @Override
+    public void deleteByBookmarkId(String bookmarkId) {
+        LambdaQueryWrapper<BookmarkTag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookmarkTag::getBookmarkId, bookmarkId);
+        bookmarkTagMapper.delete(queryWrapper);
     }
 }
 
