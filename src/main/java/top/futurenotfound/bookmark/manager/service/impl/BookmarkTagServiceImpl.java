@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.domain.BookmarkTag;
 import top.futurenotfound.bookmark.manager.domain.Tag;
-import top.futurenotfound.bookmark.manager.dto.BookmarkTagDTO;
 import top.futurenotfound.bookmark.manager.mapper.BookmarkTagMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
-import top.futurenotfound.bookmark.manager.service.TagService;
 
 import java.util.List;
 import java.util.Set;
@@ -22,7 +20,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class BookmarkTagServiceImpl implements BookmarkTagService {
     private final BookmarkTagMapper bookmarkTagMapper;
-    private final TagService tagService;
 
     @Override
     public List<BookmarkTag> listByBookmarkId(String bookmarkId) {
@@ -59,11 +56,7 @@ public class BookmarkTagServiceImpl implements BookmarkTagService {
     }
 
     @Override
-    public BookmarkTag save(BookmarkTagDTO bookmarkTagDTO) {
-        Tag tag = tagService.getByName(bookmarkTagDTO.getTagName());
-        BookmarkTag bookmarkTag = new BookmarkTag();
-        bookmarkTag.setTagId(tag.getId());
-        bookmarkTag.setBookmarkId(bookmarkTag.getBookmarkId());
+    public BookmarkTag save(BookmarkTag bookmarkTag) {
         bookmarkTagMapper.insert(bookmarkTag);
         return bookmarkTag;
     }

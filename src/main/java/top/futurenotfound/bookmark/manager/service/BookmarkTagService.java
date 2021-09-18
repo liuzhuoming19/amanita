@@ -2,7 +2,6 @@ package top.futurenotfound.bookmark.manager.service;
 
 import top.futurenotfound.bookmark.manager.domain.BookmarkTag;
 import top.futurenotfound.bookmark.manager.domain.Tag;
-import top.futurenotfound.bookmark.manager.dto.BookmarkTagDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -30,7 +29,7 @@ public interface BookmarkTagService {
 
     void deleteByBookmarkId(String bookmarkId);
 
-    BookmarkTag save(BookmarkTagDTO bookmarkTagDTO);
+    BookmarkTag save(BookmarkTag bookmarkTag);
 
     BookmarkTag getById(String id);
 }
