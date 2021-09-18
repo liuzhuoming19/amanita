@@ -41,4 +41,6 @@ public interface AccessService {
      * @param userId 用户id
      */
     Page<Access> pageDesensitizedByUserId(String userId, Page<Access> page);
+
+    void deleteById(String id);
 }

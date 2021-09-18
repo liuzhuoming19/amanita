@@ -3,6 +3,7 @@ package top.futurenotfound.bookmark.manager.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
 import top.futurenotfound.bookmark.manager.domain.User;
@@ -12,8 +13,7 @@ import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
-
-import java.util.Objects;
+import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 /**
  * 重定向controller
@@ -26,12 +26,12 @@ import java.util.Objects;
 public class RedirectController {
     private final BookmarkService bookmarkService;
 
-    @GetMapping
-    public String redirect(String bookmarkId) {
+    @GetMapping("{bookmarkId}")
+    public String redirect(@PathVariable String bookmarkId) {
         Bookmark bookmark = bookmarkService.getById(bookmarkId);
         User user = CurrentLoginUser.get();
         if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
-        if (!Objects.equals(bookmark.getUserId(), user.getId()))
+        if (!StringUtil.equals(bookmark.getUserId(), user.getId()))
             throw new AuthException(ExceptionCode.NO_AUTH);
         if (bookmark.getIsRead() == 0) {
             bookmark.setUpdateTime(DateUtil.now());

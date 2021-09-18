@@ -17,9 +17,9 @@ import top.futurenotfound.bookmark.manager.service.BookmarkService;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
+import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 /**
  * 书签controller
@@ -42,7 +42,7 @@ public class BookmarkController {
         Bookmark bookmark = bookmarkService.getById(id);
 
         if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
-        if (!Objects.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
 
         return ResponseEntity.ok(bookmark);
     }
@@ -69,7 +69,7 @@ public class BookmarkController {
         User user = CurrentLoginUser.get();
         Bookmark bookmarkDb = bookmarkService.getById(bookmarkDTO.getId());
 
-        if (!Objects.equals(user.getId(), bookmarkDb.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (!StringUtil.equals(user.getId(), bookmarkDb.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
 
         Bookmark bookmark = bookmarkService.update(bookmarkDTO);
         return ResponseEntity.ok(bookmark);
@@ -82,7 +82,7 @@ public class BookmarkController {
         Bookmark bookmark = bookmarkService.getById(id);
 
         if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
-        if (!Objects.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
 
         bookmarkService.deleteById(id);
         return ResponseEntity.ok(bookmark);

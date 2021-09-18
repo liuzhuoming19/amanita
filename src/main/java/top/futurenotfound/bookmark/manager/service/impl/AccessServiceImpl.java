@@ -77,4 +77,9 @@ public class AccessServiceImpl implements AccessService {
         for (Access access : accesses.getRecords()) access.setSecret("******");
         return accesses;
     }
+
+    @Override
+    public void deleteById(String id) {
+        accessMapper.deleteById(id);
+    }
 }
