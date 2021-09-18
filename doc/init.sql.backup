@@ -308,3 +308,70 @@ alter table access
 create unique index if not exists access_id_uindex
     on access (id);
 
+create table if not exists invite_code
+(
+    id                    varchar(32)                         not null
+        constraint invite_code_pk
+            primary key,
+    code                  varchar(20)                         not null,
+    user_id               varchar(32)                         not null,
+    type                  integer   default 0                 not null,
+    invite_code_reward_id varchar(32),
+    expire_time           timestamp                           not null,
+    create_time           timestamp default CURRENT_TIMESTAMP not null,
+    update_time           timestamp default CURRENT_TIMESTAMP not null
+);
+
+comment on table invite_code is '邀请码';
+
+comment on column invite_code.code is '邀请码';
+
+comment on column invite_code.user_id is '用户id';
+
+comment on column invite_code.type is '邀请码类型 0普通 1附带奖励（例如赠送一定时长的会员）';
+
+comment on column invite_code.invite_code_reward_id is '邀请码附赠的奖励id';
+
+comment on column invite_code.expire_time is '过期时间';
+
+alter table invite_code
+    owner to postgres;
+
+create unique index if not exists invite_code_code_uindex
+    on invite_code (code);
+
+create unique index if not exists invite_code_id_uindex
+    on invite_code (id);
+
+create table if not exists invite_code_reward
+(
+    id                 varchar(32)                         not null
+        constraint invite_code_reward_pk
+            primary key,
+    type               integer                             not null,
+    name               varchar(50)                         not null,
+    to_sender_amount   integer   default 0                 not null,
+    to_receiver_amount integer   default 0                 not null,
+    status             integer   default 1                 not null,
+    create_time        timestamp default CURRENT_TIMESTAMP not null,
+    update_time        timestamp default CURRENT_TIMESTAMP not null
+);
+
+comment on table invite_code_reward is '邀请码奖励';
+
+comment on column invite_code_reward.type is '奖励类型 0会员时长（单位：天）';
+
+comment on column invite_code_reward.name is '奖励名称';
+
+comment on column invite_code_reward.to_sender_amount is '发送人奖励数量';
+
+comment on column invite_code_reward.to_receiver_amount is '接受人奖励数量';
+
+comment on column invite_code_reward.status is '奖励状态 1可用 0不可用';
+
+alter table invite_code_reward
+    owner to postgres;
+
+create unique index if not exists invite_code_reward_id_uindex
+    on invite_code_reward (id);
+

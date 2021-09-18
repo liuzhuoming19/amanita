@@ -9,7 +9,7 @@ import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.Access;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
-import top.futurenotfound.bookmark.manager.helper.AccessHelper;
+import top.futurenotfound.bookmark.manager.helper.RandomStringUtil;
 import top.futurenotfound.bookmark.manager.mapper.AccessMapper;
 import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
@@ -26,14 +26,13 @@ import java.time.temporal.ChronoUnit;
 @Slf4j
 public class AccessServiceImpl implements AccessService {
     private final AccessMapper accessMapper;
-    private final AccessHelper accessHelper;
     private final CustomProperties customProperties;
 
     @Override
     public Access generateAccess(String userId) {
         Access access = new Access();
-        String accessKey = accessHelper.generateRandomAccess(customProperties.getAccessKeyLength());
-        String accessSecret = accessHelper.generateRandomAccess(customProperties.getAccessSecretLength());
+        String accessKey = RandomStringUtil.generateRandomString(customProperties.getAccessKeyLength());
+        String accessSecret = RandomStringUtil.generateRandomString(customProperties.getAccessSecretLength());
         access.setKey(accessKey);
         access.setSecret(accessSecret);
         access.setExpireTime(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, customProperties.getAccessExpireDays()));
@@ -46,7 +45,7 @@ public class AccessServiceImpl implements AccessService {
     public Access regenerateAccess(String id) {
         Access access = accessMapper.selectById(id);
         if (access == null) throw new AuthException(ExceptionCode.ACCESS_EXPIRED);
-        String accessSecret = accessHelper.generateRandomAccess(customProperties.getAccessSecretLength());
+        String accessSecret = RandomStringUtil.generateRandomString(customProperties.getAccessSecretLength());
         access.setSecret(accessSecret);
         access.setUpdateTime(DateUtil.now());
         accessMapper.updateById(access);

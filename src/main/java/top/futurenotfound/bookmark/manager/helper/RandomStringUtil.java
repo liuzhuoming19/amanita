@@ -1,26 +1,25 @@
 package top.futurenotfound.bookmark.manager.helper;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * access认证
+ * 随机字符串工具类
  *
  * @author liuzhuoming
  */
-@Component
-public class AccessHelper {
+public class RandomStringUtil {
     private static final String CHARS = "01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
     private static final Random rand = ThreadLocalRandom.current();
 
     /**
-     * 生成制定长度的字符串
+     * 生成指定长度的字符串（包含特殊字符）
+     * <p>
+     * 开头和结尾已做非符号处理
      *
      * @param length 长度
      */
-    public synchronized String generateRandomAccess(int length) {
+    public static synchronized String generateRandomString(int length) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < length; i++) {
             int index;
@@ -29,6 +28,21 @@ public class AccessHelper {
             } else {
                 index = rand.nextInt(CHARS.length());
             }
+            stringBuilder.append(CHARS.charAt(index));
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 生成指定长度的字符串（不包含特殊字符）
+     *
+     * @param length 长度
+     */
+    public static synchronized String generateRandomStringWithoutSymbol(int length) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int index;
+            index = rand.nextInt(CHARS.length() - 2);
             stringBuilder.append(CHARS.charAt(index));
         }
         return stringBuilder.toString();
