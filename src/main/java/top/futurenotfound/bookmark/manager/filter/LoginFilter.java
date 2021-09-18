@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.filter;
 
-import com.google.common.base.Charsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -24,8 +23,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -159,6 +160,12 @@ public class LoginFilter implements Filter {
                     return;
                 }
                 user = userService.getById(access.getUserId());
+                //只有VIP及ADMIN具备access认证权限
+                if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName())
+                        && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
+                    sendError(resp, ExceptionCode.NO_AUTH);
+                    return;
+                }
                 break;
             default:
                 sendError(resp, ExceptionCode.UNKNOWN_SOURCE);
@@ -191,7 +198,7 @@ public class LoginFilter implements Filter {
     private void sendError(HttpServletResponse resp, ExceptionCode exceptionCode) throws IOException {
         resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         resp.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-        resp.setCharacterEncoding(Charsets.UTF_8.name());
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
         resp.getWriter().print(exceptionCode);
     }
 }

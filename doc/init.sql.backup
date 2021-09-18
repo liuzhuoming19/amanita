@@ -1,8 +1,8 @@
 create table if not exists bookmark
 (
     id              varchar(36) default gen_random_uuid() not null
-    constraint bookmark_pk
-    primary key,
+        constraint bookmark_pk
+            primary key,
     url             varchar(255)                          not null,
     title           varchar(255)                          not null,
     create_time     timestamp   default CURRENT_TIMESTAMP,
@@ -16,7 +16,7 @@ create table if not exists bookmark
     first_image_url varchar(500),
     first_read_time timestamp,
     is_starred      integer     default 0                 not null
-    );
+);
 
 comment on table bookmark is '书签';
 
@@ -44,15 +44,15 @@ alter table bookmark
 create table if not exists "user"
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint user_pk
-    primary key,
+        constraint user_pk
+            primary key,
     username    varchar(15)                           not null,
     email       varchar(50)                           not null,
     password    varchar(100)                          not null,
     enabled     integer     default 1,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table "user" is '用户';
 
@@ -79,14 +79,14 @@ create unique index if not exists user_name_uindex
 create table if not exists user_access
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint user_access_pk
-    primary key,
+        constraint user_access_pk
+            primary key,
     user_id     varchar(36)                           not null,
     access_key  varchar(50)                           not null,
     secret_key  varchar(50)                           not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table user_access is '用户access';
 
@@ -105,15 +105,16 @@ create unique index if not exists user_access_id_uindex
 create table if not exists user_setting
 (
     id                            varchar(36) default gen_random_uuid() not null
-    constraint user_setting_pk
-    primary key,
+        constraint user_setting_pk
+            primary key,
     user_id                       varchar(36)                           not null,
     allow_excerpt_page_archive    integer     default 0                 not null,
     allow_bookmark_change_history integer     default 0                 not null,
     create_time                   timestamp   default CURRENT_TIMESTAMP,
     update_time                   timestamp   default CURRENT_TIMESTAMP,
-    allow_full_page_archive       integer     default 0                 not null
-    );
+    allow_full_page_archive       integer     default 0                 not null,
+    allow_page_lite               integer     default 0                 not null
+);
 
 comment on table user_setting is '用户设置';
 
@@ -122,6 +123,8 @@ comment on column user_setting.user_id is '用户id';
 comment on column user_setting.allow_excerpt_page_archive is '是否开启页面简述存档（0否 1是）';
 
 comment on column user_setting.allow_bookmark_change_history is '是否开启书签修改历史（开启后可回溯历史）(0否 1是)';
+
+comment on column user_setting.allow_page_lite is '是否开启精简版页面 0否 1是';
 
 alter table user_setting
     owner to root;
@@ -135,13 +138,13 @@ create unique index if not exists user_setting_user_id_uindex
 create table if not exists tag
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint tag_pk
-    primary key,
+        constraint tag_pk
+            primary key,
     name        varchar(15)                           not null,
     color       varchar(15)                           not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table tag is '标签';
 
@@ -161,13 +164,13 @@ create unique index if not exists tag_name_uindex
 create table if not exists bookmark_tag
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint bookmark_tag_pk
-    primary key,
+        constraint bookmark_tag_pk
+            primary key,
     bookmark_id varchar(36)                           not null,
     tag_id      varchar(36)                           not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table bookmark_tag is '书签标签';
 
@@ -184,14 +187,15 @@ create unique index if not exists bookmark_tag_id_uindex
 create table if not exists vip
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint vip_pk
-    primary key,
+        constraint vip_pk
+            primary key,
     user_id     varchar(36)                           not null,
     start_time  timestamp                             not null,
     end_time    timestamp                             not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
-    update_time timestamp   default CURRENT_TIMESTAMP
-    );
+    update_time timestamp   default CURRENT_TIMESTAMP,
+    type        integer                               not null
+);
 
 comment on table vip is '会员';
 
@@ -200,6 +204,8 @@ comment on column vip.user_id is '用户id';
 comment on column vip.start_time is '会员开始时间';
 
 comment on column vip.end_time is '会员结束时间';
+
+comment on column vip.type is '会员类型 0赞助 1免费 2支付';
 
 alter table vip
     owner to root;
@@ -210,13 +216,13 @@ create unique index if not exists vip_id_uindex
 create table if not exists vip_level
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint vip_level_pk
-    primary key,
+        constraint vip_level_pk
+            primary key,
     user_id     varchar(36)                           not null,
     level       integer     default 0                 not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table vip_level is '会员等级';
 
@@ -236,8 +242,8 @@ create unique index if not exists vip_level_user_id_uindex
 create table if not exists "order"
 (
     id             varchar(36)   not null
-    constraint order_pk
-    primary key,
+        constraint order_pk
+            primary key,
     order_no       varchar(20)   not null,
     user_id        varchar(36)   not null,
     amount         numeric       not null,
@@ -249,7 +255,7 @@ create table if not exists "order"
     create_time    timestamp default CURRENT_TIMESTAMP,
     update_time    timestamp default CURRENT_TIMESTAMP,
     payment_type   varchar(15)   not null
-    );
+);
 
 comment on table "order" is '订单';
 
@@ -283,12 +289,12 @@ create unique index if not exists order_order_no_uindex
 create table if not exists user_admin
 (
     id          varchar(36) default gen_random_uuid() not null
-    constraint user_admin_pk
-    primary key,
+        constraint user_admin_pk
+            primary key,
     user_id     varchar(36)                           not null,
     create_time timestamp   default CURRENT_TIMESTAMP,
     update_time timestamp   default CURRENT_TIMESTAMP
-    );
+);
 
 comment on table user_admin is '用户管理员';
 
@@ -303,14 +309,14 @@ create unique index if not exists user_admin_user_id_uindex
 create table if not exists access
 (
     id          varchar(36)                         not null
-    constraint access_pk
-    primary key,
+        constraint access_pk
+            primary key,
     key         varchar(50)                         not null,
     secret      varchar(50)                         not null,
     user_id     varchar(36)                         not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP not null
-    );
+);
 
 comment on table access is '认证密钥';
 
