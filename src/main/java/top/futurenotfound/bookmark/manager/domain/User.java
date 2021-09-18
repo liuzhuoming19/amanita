@@ -61,6 +61,8 @@ public class User {
 
     /**
      * 角色标识
+     *
+     * @see UserRoleType
      */
     @TableField(exist = false)
     @ApiModelProperty("角色标识")

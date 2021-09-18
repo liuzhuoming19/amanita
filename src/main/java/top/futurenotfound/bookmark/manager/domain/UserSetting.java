@@ -28,26 +28,29 @@ public class UserSetting implements Serializable {
      */
     @TableField(value = "user_id")
     private String userId;
+
     /**
-     * 是否开启页面简述存档
+     * 是否开启页面简述存档（功能类设置）
      */
-    @TableField(value = "allow_excerpt_page_archive")
-    private Integer allowExcerptPageArchive;
+    @TableField(value = "allow_feat_excerpt_page_archive")
+    private Integer allowFeatExcerptPageArchive;
     /**
-     * 是否开启页面全文存档
+     * 是否开启页面全文存档（功能类设置）
      */
-    @TableField(value = "allow_full_page_archive")
-    private Integer allowFullPageArchive;
+    @TableField(value = "allow_feat_full_page_archive")
+    private Integer allowFeatFullPageArchive;
     /**
-     * 是否开启书签修改历史（开启后可回溯历史）
+     * 是否开启书签修改历史（开启后可回溯历史）（功能类设置）
      */
-    @TableField(value = "allow_bookmark_change_history")
-    private Integer allowBookmarkChangeHistory;
+    @TableField(value = "allow_feat_bookmark_change_history")
+    private Integer allowFeatBookmarkChangeHistory;
+
     /**
-     * 是否开启精简版页面
+     * 是否开启精简版页面（UI类设置）
      */
-    @TableField(value = "allow_page_lite")
-    private Integer allowPageLite;
+    @TableField(value = "allow_ui_page_lite")
+    private Integer allowUiPageLite;
+
     /**
      *
      */

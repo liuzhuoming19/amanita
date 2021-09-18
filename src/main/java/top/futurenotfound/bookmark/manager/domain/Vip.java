@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import top.futurenotfound.bookmark.manager.env.VipType;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 会员
+ * <p>
+ * 会员时间分段插入，正常情况下勿进行任何更新操作
  *
  * @author liuzhuoming
  */
@@ -48,4 +51,12 @@ public class Vip implements Serializable {
      */
     @TableField(value = "update_time")
     private Date updateTime;
+
+    /**
+     * 会员类型
+     *
+     * @see VipType
+     */
+    @TableField(value = "type")
+    private Integer type;
 }

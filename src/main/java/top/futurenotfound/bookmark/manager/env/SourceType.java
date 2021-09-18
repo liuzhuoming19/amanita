@@ -3,7 +3,7 @@ package top.futurenotfound.bookmark.manager.env;
 /**
  * 请求来源
  *
- * @author wxkj0012
+ * @author liuzhuoming
  */
 public enum SourceType {
     /**
