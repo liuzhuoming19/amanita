@@ -291,7 +291,8 @@ create table if not exists access
     secret      varchar(50)                         not null,
     user_id     varchar(32)                         not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
-    update_time timestamp default CURRENT_TIMESTAMP not null
+    update_time timestamp default CURRENT_TIMESTAMP not null,
+    expire_time timestamp                           not null
 );
 
 comment on table access is '认证密钥';
@@ -302,11 +303,16 @@ comment on column access.secret is 'access secret';
 
 comment on column access.user_id is '用户id';
 
+comment on column access.expire_time is '过期时间';
+
 alter table access
     owner to postgres;
 
 create unique index if not exists access_id_uindex
     on access (id);
+
+create unique index if not exists access_key_uindex
+    on access (key);
 
 create table if not exists invite_code
 (
@@ -314,25 +320,31 @@ create table if not exists invite_code
         constraint invite_code_pk
             primary key,
     code                  varchar(20)                         not null,
-    user_id               varchar(32)                         not null,
+    sender_id             varchar(32)                         not null,
     type                  integer   default 0                 not null,
     invite_code_reward_id varchar(32),
     expire_time           timestamp                           not null,
     create_time           timestamp default CURRENT_TIMESTAMP not null,
-    update_time           timestamp default CURRENT_TIMESTAMP not null
+    update_time           timestamp default CURRENT_TIMESTAMP not null,
+    receiver_id           varchar(32),
+    receive_time          timestamp
 );
 
 comment on table invite_code is '邀请码';
 
 comment on column invite_code.code is '邀请码';
 
-comment on column invite_code.user_id is '用户id';
+comment on column invite_code.sender_id is 'ð邀请码用户id';
 
 comment on column invite_code.type is '邀请码类型 0普通 1附带奖励（例如赠送一定时长的会员）';
 
 comment on column invite_code.invite_code_reward_id is '邀请码附赠的奖励id';
 
 comment on column invite_code.expire_time is '过期时间';
+
+comment on column invite_code.receiver_id is '接受邀请用户id';
+
+comment on column invite_code.receive_time is '接受邀请时间';
 
 alter table invite_code
     owner to postgres;

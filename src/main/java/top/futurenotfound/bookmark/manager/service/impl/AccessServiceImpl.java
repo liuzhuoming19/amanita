@@ -13,6 +13,7 @@ import top.futurenotfound.bookmark.manager.helper.RandomStringUtil;
 import top.futurenotfound.bookmark.manager.mapper.AccessMapper;
 import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
+import top.futurenotfound.bookmark.manager.util.PasswordUtil;
 
 import java.time.temporal.ChronoUnit;
 
@@ -31,13 +32,24 @@ public class AccessServiceImpl implements AccessService {
     @Override
     public Access generateAccess(String userId) {
         Access access = new Access();
-        String accessKey = RandomStringUtil.generateRandomString(customProperties.getAccessKeyLength());
+        //accessKey不可重复
+        String accessKey;
+        while (true) {
+            accessKey = RandomStringUtil.generateRandomString(customProperties.getAccessKeyLength());
+            LambdaQueryWrapper<Access> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(Access::getKey, accessKey);
+            Access accessDb = accessMapper.selectOne(queryWrapper);
+            if (accessDb == null) break;
+        }
         String accessSecret = RandomStringUtil.generateRandomString(customProperties.getAccessSecretLength());
         access.setKey(accessKey);
-        access.setSecret(accessSecret);
+        //使用加密后的secret
+        access.setSecret(PasswordUtil.compute(accessSecret));
         access.setExpireTime(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, customProperties.getAccessExpireDays()));
         access.setUserId(userId);
         accessMapper.insert(access);
+        //返回secret原串
+        access.setSecret(accessSecret);
         return access;
     }
 
@@ -46,9 +58,12 @@ public class AccessServiceImpl implements AccessService {
         Access access = accessMapper.selectById(id);
         if (access == null) throw new AuthException(GlobalExceptionCode.ACCESS_EXPIRED);
         String accessSecret = RandomStringUtil.generateRandomString(customProperties.getAccessSecretLength());
-        access.setSecret(accessSecret);
+        //使用加密后的secret
+        access.setSecret(PasswordUtil.compute(accessSecret));
         access.setUpdateTime(DateUtil.now());
         accessMapper.updateById(access);
+        //返回secret原串
+        access.setSecret(accessSecret);
         return access;
     }
 
@@ -56,10 +71,12 @@ public class AccessServiceImpl implements AccessService {
     public Access getByKeyAndSecret(String key, String secret) {
         LambdaQueryWrapper<Access> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Access::getKey, key)
-                .eq(Access::getSecret, secret)
                 //筛选未过期
                 .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= expire_time", DateUtil.formatNow(DateUtil.DATETIME_FORMATTER));
-        return accessMapper.selectOne(queryWrapper);
+        Access access = accessMapper.selectOne(queryWrapper);
+        if (access == null || !PasswordUtil.verify(secret, access.getSecret()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
+        return access;
     }
 
     @Override
