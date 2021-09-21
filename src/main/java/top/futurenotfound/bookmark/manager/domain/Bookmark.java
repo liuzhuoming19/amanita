@@ -9,6 +9,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,8 @@ import java.util.List;
 @TableName(value = "bookmark")
 @Data
 @ApiModel(value = "Bookmark", description = "书签")
-public class Bookmark {
+public class Bookmark implements Serializable {
+    private static final long serialVersionUID = 569671341383954526L;
     @TableId(value = "id")
     @ApiModelProperty("id")
     private String id;

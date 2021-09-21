@@ -58,7 +58,7 @@ public class BookmarkTagServiceImpl implements BookmarkTagService {
     @Override
     public BookmarkTag save(BookmarkTag bookmarkTag) {
         bookmarkTagMapper.insert(bookmarkTag);
-        return bookmarkTag;
+        return getById(bookmarkTag.getId());
     }
 
     @Override

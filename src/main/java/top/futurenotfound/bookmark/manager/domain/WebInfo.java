@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 网页基本信息
  *
@@ -12,7 +14,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WebInfo {
+public class WebInfo implements Serializable {
+    private static final long serialVersionUID = -6119913150703528350L;
     /**
      * url
      */

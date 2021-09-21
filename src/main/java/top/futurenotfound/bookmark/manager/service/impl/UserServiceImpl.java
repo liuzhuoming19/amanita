@@ -8,7 +8,7 @@ import top.futurenotfound.bookmark.manager.domain.UserSetting;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.mapper.UserMapper;
 import top.futurenotfound.bookmark.manager.service.UserRoleService;
 import top.futurenotfound.bookmark.manager.service.UserService;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     public User getById(String id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
+            throw new BookmarkException(GlobalExceptionCode.USER_NOT_EXIST);
         }
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         User userDb = getByUsername(user.getUsername());
         if (userDb != null && !Objects.equals(userDb.getId(), user.getId())) {
-            throw new BookmarkException(ExceptionCode.USERNAME_WAS_USED);
+            throw new BookmarkException(GlobalExceptionCode.USERNAME_WAS_USED);
         }
         String password = PasswordUtil.compute(user.getPassword());
         //重设加密后的密码
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         userLambdaQueryWrapper.eq(User::getUsername, username);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
         if (user == null) {
-            throw new BookmarkException(ExceptionCode.USER_NOT_EXIST);
+            throw new BookmarkException(GlobalExceptionCode.USER_NOT_EXIST);
         }
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());

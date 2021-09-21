@@ -15,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class WebExcerptInfo extends WebInfo {
+    private static final long serialVersionUID = 1894805268197993154L;
     /**
      * 摘要
      */

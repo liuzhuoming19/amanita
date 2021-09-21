@@ -12,6 +12,7 @@ import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.SourceType;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.JwtHelper;
 import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.service.UserService;
@@ -52,8 +53,11 @@ public class LoginFilter implements Filter {
             "/doc.html",
             "/webjars/**",
             "/swagger**",
-            "/v3/**",
+            "/v3/**"
             //other
+    );
+    //不需登录但需标注来源
+    private static final List<String> NEED_SOURCE_URL_LIST = List.of(
             //登录
             "/login/**"
     );
@@ -74,6 +78,7 @@ public class LoginFilter implements Filter {
      * 登录后VIP及以上权限配置就可以访问
      */
     private static final List<String> VIP_ALLOW_URL_LIST = List.of(
+            "/access/**"
     );
     /**
      * 登录后ADMIN及以上权限配置就可以访问
@@ -85,8 +90,8 @@ public class LoginFilter implements Filter {
      */
     private static final Map<UserRoleType, Predicate<String>> ROLE_STRATEGY = Map.of(
             UserRoleType.USER, (String url) -> matchAny(USER_ALLOW_URL_LIST, url),
-            UserRoleType.VIP, (String url) -> matchAny(VIP_ALLOW_URL_LIST, url),
-            UserRoleType.ADMIN, (String url) -> matchAny(ADMIN_ALLOW_URL_LIST, url)
+            UserRoleType.VIP, (String url) -> matchAny(USER_ALLOW_URL_LIST, url) || matchAny(VIP_ALLOW_URL_LIST, url),
+            UserRoleType.ADMIN, (String url) -> matchAny(USER_ALLOW_URL_LIST, url) || matchAny(VIP_ALLOW_URL_LIST, url) || matchAny(ADMIN_ALLOW_URL_LIST, url)
     );
 
     private final UserService userService;
@@ -123,14 +128,19 @@ public class LoginFilter implements Filter {
         String source = req.getHeader(Constant.HEADER_SOURCE);
 
         if (StringUtil.isEmpty(source)) {
-            sendError(resp, ExceptionCode.SOURCE_IS_REQUIRED);
+            sendError(resp, GlobalExceptionCode.SOURCE_IS_REQUIRED);
             return;
         }
 
         SourceType sourceType = SourceType.getByName(source);
 
         if (sourceType == null) {
-            sendError(resp, ExceptionCode.UNKNOWN_SOURCE);
+            sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
+            return;
+        }
+
+        if (matchAny(NEED_SOURCE_URL_LIST, url)) {
+            chain.doFilter(req, resp);
             return;
         }
 
@@ -140,14 +150,14 @@ public class LoginFilter implements Filter {
             case WEB: //jwt验证
                 String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
                 if (StringUtil.isEmpty(token)) {
-                    sendError(resp, ExceptionCode.TOKEN_EXPIRED);
+                    sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
                     return;
                 }
                 try {
                     String username = jwtHelper.getUsername(token);
                     user = userService.getByUsername(username);
                 } catch (Exception e) {
-                    sendError(resp, ExceptionCode.TOKEN_ERROR);
+                    sendError(resp, GlobalExceptionCode.TOKEN_ERROR);
                     return;
                 }
                 break;
@@ -156,24 +166,24 @@ public class LoginFilter implements Filter {
                 String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
                 Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
                 if (access == null) {
-                    sendError(resp, ExceptionCode.ACCESS_EXPIRED);
+                    sendError(resp, GlobalExceptionCode.ACCESS_EXPIRED);
                     return;
                 }
                 user = userService.getById(access.getUserId());
                 //只有VIP及ADMIN具备access认证权限
                 if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName())
                         && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
-                    sendError(resp, ExceptionCode.NO_AUTH);
+                    sendError(resp, GlobalExceptionCode.NO_AUTH);
                     return;
                 }
                 break;
             default:
-                sendError(resp, ExceptionCode.UNKNOWN_SOURCE);
+                sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
                 return;
         }
 
         if (user == null) {
-            sendError(resp, ExceptionCode.USER_NOT_EXIST);
+            sendError(resp, GlobalExceptionCode.USER_NOT_EXIST);
             return;
         }
         //存入线程变量
@@ -192,7 +202,7 @@ public class LoginFilter implements Filter {
         }
 
         //不符合任意一种匹配规则则视为无效请求
-        sendError(resp, ExceptionCode.NO_ROUTE_ERROR);
+        sendError(resp, GlobalExceptionCode.NO_ROUTE_ERROR);
     }
 
     private void sendError(HttpServletResponse resp, ExceptionCode exceptionCode) throws IOException {

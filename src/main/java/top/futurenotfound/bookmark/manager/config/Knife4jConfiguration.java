@@ -7,7 +7,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.builders.RequestParameterBuilder;
 import springfox.documentation.service.*;
@@ -31,30 +30,30 @@ public class Knife4jConfiguration {
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
         return new Docket(DocumentationType.OAS_30)
-                .apiInfo(new ApiInfoBuilder()
-                        //.title("swagger-bootstrap-ui-demo RESTful APIs")
-                        .description("# Bookmark Manager RESTful APIs")
-                        .termsOfServiceUrl("https://futurenotfound.top")
-                        .contact(
-                                new Contact(
-                                        "liuzhuoming",
-                                        "https://futurenotfound.top",
-                                        "liuzhuoming23@live.com"
-                                )
-                        )
-                        .version("0.0.1")
-                        .build())
-                //分组名称
+                .apiInfo(apiInfo())
                 .groupName("0.x.x版本")
-                .globalRequestParameters(parameters())
                 .select()
-                //这里指定Controller扫描包路径
                 .apis(RequestHandlerSelectors.withClassAnnotation(Api.class)
                         .and(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class)))
-                .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes())
-                .securityContexts(securityContexts());
+                .securityContexts(securityContexts())
+                .globalRequestParameters(parameters());
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .description("# Bookmark Manager RESTful APIs")
+                .termsOfServiceUrl("https://futurenotfound.top")
+                .contact(
+                        new Contact(
+                                "liuzhuoming",
+                                "https://futurenotfound.top",
+                                "liuzhuoming23@live.com"
+                        )
+                )
+                .version("0.0.1")
+                .build();
     }
 
     private List<SecurityScheme> securitySchemes() {
@@ -67,7 +66,8 @@ public class Knife4jConfiguration {
                 SecurityContext.builder()
                         .securityReferences(defaultAuth())
                         .operationSelector(
-                                operationContext -> !operationContext.requestMappingPattern().matches("/login/*")
+                                operationContext ->
+                                        !operationContext.requestMappingPattern().matches("/login")
                         )
                         .build()
         );
@@ -75,7 +75,7 @@ public class Knife4jConfiguration {
 
     private List<SecurityReference> defaultAuth() {
         return Lists.newArrayList(
-                new SecurityReference(Constant.HEADER_AUTHORIZATION, ArrayUtils.toArray(new AuthorizationScope("global", "accessEverything"))));
+                new SecurityReference(Constant.HEADER_AUTHORIZATION, ArrayUtils.toArray(new AuthorizationScope("global", "全局授权header"))));
     }
 
     private List<RequestParameter> parameters() {

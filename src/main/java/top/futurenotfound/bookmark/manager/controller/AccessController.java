@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import top.futurenotfound.bookmark.manager.domain.Access;
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
@@ -40,8 +40,8 @@ public class AccessController {
     public ResponseEntity<Access> update(@PathVariable String id) {
         User user = CurrentLoginUser.get();
         Access accessDb = accessService.getDesensitizedById(id);
-        if (accessDb == null) throw new AuthException(ExceptionCode.ACCESS_EXPIRED);
-        if (StringUtil.equals(accessDb.getUserId(), user.getId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (accessDb == null) throw new AuthException(GlobalExceptionCode.ACCESS_EXPIRED);
+        if (StringUtil.equals(accessDb.getUserId(), user.getId())) throw new AuthException(GlobalExceptionCode.NO_AUTH);
         Access access = accessService.regenerateAccess(id);
         return ResponseEntity.ok(access);
     }
@@ -61,7 +61,7 @@ public class AccessController {
     public ResponseEntity<Access> delete(@PathVariable String id) {
         User user = CurrentLoginUser.get();
         Access access = accessService.getDesensitizedById(id);
-        if (!StringUtil.equals(access.getUserId(), user.getId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (!StringUtil.equals(access.getUserId(), user.getId())) throw new AuthException(GlobalExceptionCode.NO_AUTH);
         accessService.deleteById(id);
         return ResponseEntity.ok(access);
     }

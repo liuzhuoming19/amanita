@@ -9,7 +9,11 @@ import top.futurenotfound.bookmark.manager.domain.UserSetting;
  */
 public interface UserSettingService {
 
+    UserSetting getById(String id);
+
     UserSetting getByUserId(String userId);
 
     void save(UserSetting userSetting);
+
+    UserSetting updateById(UserSetting userSetting);
 }

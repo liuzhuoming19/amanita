@@ -2,7 +2,7 @@ package top.futurenotfound.bookmark.manager.util;
 
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 
 /**
  * 当前登陆用户信息
@@ -17,7 +17,7 @@ public class CurrentLoginUser {
 
     public static User get() {
         User user = userThreadLocal.get();
-        if (user == null) throw new AuthException(ExceptionCode.USER_NOT_EXIST);
+        if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
         return user;
     }
 

@@ -20,6 +20,11 @@ public class UserSettingServiceImpl implements UserSettingService {
     private final UserSettingMapper userSettingMapper;
 
     @Override
+    public UserSetting getById(String id) {
+        return userSettingMapper.selectById(id);
+    }
+
+    @Override
     public UserSetting getByUserId(String userId) {
         LambdaQueryWrapper<UserSetting> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserSetting::getUserId, userId);
@@ -29,6 +34,12 @@ public class UserSettingServiceImpl implements UserSettingService {
     @Override
     public void save(UserSetting userSetting) {
         userSettingMapper.insert(userSetting);
+    }
+
+    @Override
+    public UserSetting updateById(UserSetting userSetting) {
+        userSettingMapper.updateById(userSetting);
+        return userSetting;
     }
 }
 

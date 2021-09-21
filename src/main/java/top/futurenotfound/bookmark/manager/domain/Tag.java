@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,8 @@ import java.util.Date;
  */
 @TableName(value = "tag")
 @Data
-public class Tag {
+public class Tag implements Serializable {
+    private static final long serialVersionUID = -7609668574330810240L;
     @TableId(value = "id")
     private String id;
     /**

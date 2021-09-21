@@ -1,6 +1,5 @@
 package top.futurenotfound.bookmark.manager.helper;
 
-import cn.hutool.core.text.StrFormatter;
 import cn.hutool.jwt.JWTException;
 import cn.hutool.jwt.JWTUtil;
 import cn.hutool.jwt.RegisteredPayload;
@@ -51,9 +50,9 @@ public class JwtHelper {
 
     public void verify(String token) {
         if (StringUtil.isEmpty(token))
-            throw new JWTException(StrFormatter.format("JWT 解析失败----【{}】", token));
+            throw new JWTException(StringUtil.format("JWT 解析失败----【{}】", token));
         boolean tf = JWTUtil.verify(token, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
         if (!tf)
-            throw new JWTException(StrFormatter.format("JWT 解析失败----【{}】", token));
+            throw new JWTException(StringUtil.format("JWT 解析失败----【{}】", token));
     }
 }

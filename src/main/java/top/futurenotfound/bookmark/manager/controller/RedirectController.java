@@ -9,7 +9,7 @@ import top.futurenotfound.bookmark.manager.domain.Bookmark;
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
@@ -30,9 +30,9 @@ public class RedirectController {
     public String redirect(@PathVariable String bookmarkId) {
         Bookmark bookmark = bookmarkService.getById(bookmarkId);
         User user = CurrentLoginUser.get();
-        if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
         if (!StringUtil.equals(bookmark.getUserId(), user.getId()))
-            throw new AuthException(ExceptionCode.NO_AUTH);
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
         if (bookmark.getIsRead() == 0) {
             bookmark.setUpdateTime(DateUtil.now());
             bookmark.setFirstReadTime(DateUtil.now());

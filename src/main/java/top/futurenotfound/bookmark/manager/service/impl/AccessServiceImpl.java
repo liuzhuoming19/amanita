@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.Access;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.RandomStringUtil;
 import top.futurenotfound.bookmark.manager.mapper.AccessMapper;
 import top.futurenotfound.bookmark.manager.service.AccessService;
@@ -44,7 +44,7 @@ public class AccessServiceImpl implements AccessService {
     @Override
     public Access regenerateAccess(String id) {
         Access access = accessMapper.selectById(id);
-        if (access == null) throw new AuthException(ExceptionCode.ACCESS_EXPIRED);
+        if (access == null) throw new AuthException(GlobalExceptionCode.ACCESS_EXPIRED);
         String accessSecret = RandomStringUtil.generateRandomString(customProperties.getAccessSecretLength());
         access.setSecret(accessSecret);
         access.setUpdateTime(DateUtil.now());

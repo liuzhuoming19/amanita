@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import top.futurenotfound.bookmark.manager.domain.TokenEntity;
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.JwtHelper;
 import top.futurenotfound.bookmark.manager.service.UserService;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
@@ -35,7 +35,7 @@ public class LoginController {
                                              @RequestParam String password) {
         User user = userService.getByUsername(username);
         if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
-            throw new AuthException(ExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
+            throw new AuthException(GlobalExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         }
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());
         return ResponseEntity.ok(tokenEntity);

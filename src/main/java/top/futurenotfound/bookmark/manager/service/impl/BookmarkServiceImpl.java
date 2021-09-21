@@ -10,7 +10,7 @@ import top.futurenotfound.bookmark.manager.domain.*;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.helper.ContentExtractorHelper;
 import top.futurenotfound.bookmark.manager.mapper.BookmarkMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
@@ -46,7 +46,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public void updateById(Bookmark bookmark) {
         if (bookmarkMapper.selectById(bookmark.getId()) == null)
-            throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
+            throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
 
         bookmarkMapper.updateById(bookmark);
     }
@@ -55,7 +55,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Bookmark getById(String id) {
         Bookmark bookmark = bookmarkMapper.selectById(id);
         if (bookmark == null) {
-            throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
+            throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
         }
         List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
         bookmark.setTags(tags);
@@ -145,12 +145,12 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (!UserRoleType.VIP.getName().equals(user.getRole())) {
             //普通用户可收藏书签数量上限
             if (count(user.getId()) >= customProperties.getUserBookmarkNumMax()) {
-                throw new BookmarkException(ExceptionCode.USER_HAS_MAX_BOOKMARKS);
+                throw new BookmarkException(GlobalExceptionCode.USER_HAS_MAX_BOOKMARKS);
             }
         }
 
         if (isExistByUserIdAndUrl(user.getId(), url))
-            throw new BookmarkException(ExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
+            throw new BookmarkException(GlobalExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
 
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
         WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
@@ -172,7 +172,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         if (UserRoleType.VIP.getName().equals(user.getRole())) {
             if (userSetting.getAllowFeatFullPageArchive() == 1) {
-                //TODO 全文特殊保存
+                //TODO 全文保存
             }
             if (userSetting.getAllowFeatBookmarkChangeHistory() == 1) {
                 //TODO 保存修改历史

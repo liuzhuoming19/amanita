@@ -12,7 +12,7 @@ import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
-import top.futurenotfound.bookmark.manager.exception.ExceptionCode;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.service.BookmarkService;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
@@ -41,8 +41,9 @@ public class BookmarkController {
         User user = CurrentLoginUser.get();
         Bookmark bookmark = bookmarkService.getById(id);
 
-        if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
-        if (!StringUtil.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
 
         return ResponseEntity.ok(bookmark);
     }
@@ -69,7 +70,8 @@ public class BookmarkController {
         User user = CurrentLoginUser.get();
         Bookmark bookmarkDb = bookmarkService.getById(bookmarkDTO.getId());
 
-        if (!StringUtil.equals(user.getId(), bookmarkDb.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (!StringUtil.equals(user.getId(), bookmarkDb.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
 
         Bookmark bookmark = bookmarkService.update(bookmarkDTO);
         return ResponseEntity.ok(bookmark);
@@ -81,8 +83,9 @@ public class BookmarkController {
         User user = CurrentLoginUser.get();
         Bookmark bookmark = bookmarkService.getById(id);
 
-        if (bookmark == null) throw new BookmarkException(ExceptionCode.BOOKMARK_NOT_EXIST);
-        if (!StringUtil.equals(user.getId(), bookmark.getUserId())) throw new AuthException(ExceptionCode.NO_AUTH);
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
 
         bookmarkService.deleteById(id);
         return ResponseEntity.ok(bookmark);
