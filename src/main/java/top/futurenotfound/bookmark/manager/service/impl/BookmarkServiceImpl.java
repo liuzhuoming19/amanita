@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.*;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
 import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
@@ -18,9 +19,11 @@ import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 import top.futurenotfound.bookmark.manager.service.TagService;
 import top.futurenotfound.bookmark.manager.service.UserSettingService;
 import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
+import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 书签
@@ -40,7 +43,22 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     public void deleteById(String id) {
-        bookmarkMapper.deleteById(id);
+        User user = CurrentLoginUser.get();
+        UserSetting userSetting = userSettingService.getByUserId(user.getId());
+        /*
+        vip删除书签可以逻辑删除（伪回收站
+        查询回收站书签应设置至今30天内的查询时间
+         */
+        if ((UserRoleType.VIP.getName().equals(user.getRole()) || UserRoleType.ADMIN.getName().equals(user.getRole()))
+                && Objects.equals(userSetting.getAllowFeatBookmarkDeletedHistory(), Constant.DATABASE_TRUE)) {
+            Bookmark bookmark = new Bookmark();
+            bookmark.setId(id);
+            bookmark.setIsDeleted(Constant.DATABASE_TRUE);
+            bookmark.setDeleteTime(DateUtil.now());
+            bookmarkMapper.updateById(bookmark);
+        } else {
+            bookmarkMapper.deleteById(id);
+        }
     }
 
     @Override
@@ -57,6 +75,8 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (bookmark == null) {
             throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
         }
+        if (Objects.equals(bookmark.getIsDeleted(), Constant.DATABASE_TRUE))
+            throw new BookmarkException(GlobalExceptionCode.BOOKMARK_IS_ALREADY_DELETED);
         List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
         bookmark.setTags(tags);
         return bookmark;
@@ -66,6 +86,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Page<Bookmark> pageByUserId(String userId, Page<Bookmark> page) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Bookmark::getUserId, userId)
+                .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
                 .orderByDesc(Bookmark::getCreateTime);
         Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
         for (Bookmark bookmark : bookmarkPage.getRecords()) {
@@ -124,7 +145,8 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private Long count(String userId) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Bookmark::getUserId, userId);
+        queryWrapper.eq(Bookmark::getUserId, userId)
+                .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
         return bookmarkMapper.selectCount(queryWrapper);
     }
 
@@ -158,7 +180,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setFirstImageUrl(webExcerptInfo.getFirstImageUrl());
         bookmark.setHost(webExcerptInfo.getHost());
 
-        if (userSetting.getAllowFeatExcerptPageArchive() == 1) {
+        if (Objects.equals(userSetting.getAllowFeatExcerptPageArchive(), Constant.DATABASE_TRUE)) {
             bookmark.setExcerpt(webExcerptInfo.getExcerpt());
         }
         if (StringUtil.isEmpty(title)) {
@@ -171,11 +193,8 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
 
         if (UserRoleType.VIP.getName().equals(user.getRole())) {
-            if (userSetting.getAllowFeatFullPageArchive() == 1) {
+            if (Objects.equals(userSetting.getAllowFeatFullPageArchive(), Constant.DATABASE_TRUE)) {
                 //TODO 全文保存
-            }
-            if (userSetting.getAllowFeatBookmarkChangeHistory() == 1) {
-                //TODO 保存修改历史
             }
         }
         return bookmark;

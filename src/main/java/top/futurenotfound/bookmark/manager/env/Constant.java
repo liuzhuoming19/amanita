@@ -25,6 +25,9 @@ public interface Constant {
     String HEADER_ACCESS_KEY = "AccessKey";
     String HEADER_ACCESS_SECRET = "AccessSecret";
 
+    Integer DATABASE_TRUE = 1;
+    Integer DATABASE_FALSE = 0;
+
     List<String> COLOR_CODES = new ArrayList<>(
             Set.of(
                     //TODO 待补充颜色代码

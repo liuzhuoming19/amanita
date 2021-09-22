@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
 import top.futurenotfound.bookmark.manager.domain.User;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
 import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
@@ -20,6 +21,7 @@ import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * 书签controller
@@ -72,6 +74,9 @@ public class BookmarkController {
 
         if (!StringUtil.equals(user.getId(), bookmarkDb.getUserId()))
             throw new AuthException(GlobalExceptionCode.NO_AUTH);
+
+        if (Objects.equals(bookmarkDb.getIsDeleted(), Constant.DATABASE_TRUE))
+            throw new BookmarkException(GlobalExceptionCode.BOOKMARK_IS_ALREADY_DELETED);
 
         Bookmark bookmark = bookmarkService.update(bookmarkDTO);
         return ResponseEntity.ok(bookmark);

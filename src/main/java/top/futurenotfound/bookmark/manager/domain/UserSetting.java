@@ -36,10 +36,10 @@ public class UserSetting implements Serializable {
     @TableField(value = "allow_feat_full_page_archive")
     private Integer allowFeatFullPageArchive;
     /**
-     * 是否开启书签修改历史（开启后可回溯历史）（功能类设置）
+     * 是否开启书签删除历史（开启后可在回收站保存30天）（功能类设置） 0否1是
      */
-    @TableField(value = "allow_feat_bookmark_change_history")
-    private Integer allowFeatBookmarkChangeHistory;
+    @TableField(value = "allow_feat_bookmark_deleted_history")
+    private Integer allowFeatBookmarkDeletedHistory;
 
     /**
      * 是否开启精简版页面（UI类设置）

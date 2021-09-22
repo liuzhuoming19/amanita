@@ -48,15 +48,15 @@ public class UserSettingController {
         if (!StringUtil.equals(user.getId(), userSettingDb.getUserId()))
             throw new AuthException(GlobalExceptionCode.NO_AUTH);
 
-        //普通用户没有修改全文存档和历史回溯选项的权限
+        //普通用户没有修改全文存档和回收站选项的权限
         if (StringUtil.equals(user.getRole(), UserRoleType.USER.getName())) {
-            if (userSettingDTO.getAllowFeatBookmarkChangeHistory() == 1
+            if (userSettingDTO.getAllowFeatBookmarkDeletedHistory() == 1
                     || userSettingDTO.getAllowFeatFullPageArchive() == 1)
                 throw new AuthException(GlobalExceptionCode.NO_AUTH);
         }
 
         UserSetting userSetting = BeanUtil.convert(userSettingDb, UserSetting.class);
-        userSetting.setAllowFeatBookmarkChangeHistory(userSettingDTO.getAllowFeatBookmarkChangeHistory());
+        userSetting.setAllowFeatBookmarkDeletedHistory(userSettingDTO.getAllowFeatBookmarkDeletedHistory());
         userSetting.setAllowFeatFullPageArchive(userSettingDTO.getAllowFeatFullPageArchive());
         userSetting.setAllowFeatExcerptPageArchive(userSettingDTO.getAllowFeatExcerptPageArchive());
         userSetting.setAllowUiPageLite(userSettingDTO.getAllowUiPageLite());

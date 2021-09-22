@@ -87,6 +87,12 @@ public class Bookmark implements Serializable {
     @TableField(value = "is_starred")
     @ApiModelProperty("是否收藏 0否 1是")
     private Integer isStarred;
+    @TableField(value = "delete_time")
+    @ApiModelProperty("删除时间")
+    private Date deleteTime;
+    @TableField(value = "is_deleted")
+    @ApiModelProperty("是否已删除 0否 1是")
+    private Integer isDeleted;
 
     @TableField(value = "create_time")
     private Date createTime;
