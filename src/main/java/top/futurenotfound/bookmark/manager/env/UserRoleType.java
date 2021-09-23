@@ -18,15 +18,11 @@ public enum UserRoleType {
     private String name;
 
     public static UserRoleType getByName(String name) {
-        switch (name) {
-            case "USER":
-                return USER;
-            case "VIP":
-                return VIP;
-            case "ADMIN":
-                return ADMIN;
-            default:
-                return null;
-        }
+        return switch (name) {
+            case "USER" -> USER;
+            case "VIP" -> VIP;
+            case "ADMIN" -> ADMIN;
+            default -> null;
+        };
     }
 }

@@ -21,13 +21,10 @@ public enum SourceType {
     ;
 
     public static SourceType getByName(String name) {
-        switch (name) {
-            case "WEB":
-                return WEB;
-            case "API":
-                return API;
-            default:
-                return null;
-        }
+        return switch (name) {
+            case "WEB" -> WEB;
+            case "API" -> API;
+            default -> null;
+        };
     }
 }

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -22,6 +23,7 @@ import java.util.Date;
 @Data
 @ApiModel(value = "Access", description = "访问密钥")
 public class Access implements Serializable {
+    @Serial
     private static final long serialVersionUID = 891419573667527429L;
     @TableId(value = "id")
     @ApiModelProperty("id")

@@ -2,6 +2,8 @@ package top.futurenotfound.bookmark.manager.exception;
 
 import lombok.Getter;
 
+import java.io.Serial;
+
 /**
  * 认证异常
  *
@@ -9,6 +11,7 @@ import lombok.Getter;
  */
 @Getter
 public class AuthException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = -5786150841339936581L;
     private final ExceptionCode exceptionCode;
 

@@ -11,7 +11,7 @@ import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
  */
 public interface BookmarkService {
 
-    Page<Bookmark> pageByUserId(String userId, Page<Bookmark> page);
+    Page<Bookmark> pageByUserIdAndSearchType(String userId, Integer searchType, Page<Bookmark> page);
 
     Bookmark getById(String id);
 

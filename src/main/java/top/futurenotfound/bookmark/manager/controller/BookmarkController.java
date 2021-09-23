@@ -2,6 +2,8 @@ package top.futurenotfound.bookmark.manager.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,11 +54,16 @@ public class BookmarkController {
 
     @GetMapping
     @ApiOperation("分页列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "searchType", value = "搜索类型 0普通1加星2已删除")
+    })
     public ResponseEntity<Page<Bookmark>> page(@RequestParam(defaultValue = "10") Integer pageSize,
-                                               @RequestParam(defaultValue = "1") Integer pageNum) {
+                                               @RequestParam(defaultValue = "1") Integer pageNum,
+                                               @RequestParam(defaultValue = "0") Integer searchType) {
         User user = CurrentLoginUser.get();
         if (pageSize > 100) pageSize = 100;
-        return ResponseEntity.ok(bookmarkService.pageByUserId(user.getId(), new Page<>(pageNum, pageSize)));
+        return ResponseEntity.ok(bookmarkService.pageByUserIdAndSearchType(user.getId(), searchType,
+                new Page<>(pageNum, pageSize)));
     }
 
     @PostMapping

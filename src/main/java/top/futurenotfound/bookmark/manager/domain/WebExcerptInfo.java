@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * 网页正文摘要信息
  *
@@ -15,6 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class WebExcerptInfo extends WebInfo {
+    @Serial
     private static final long serialVersionUID = 1894805268197993154L;
     /**
      * 摘要

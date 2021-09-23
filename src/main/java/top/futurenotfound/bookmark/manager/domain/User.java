@@ -10,6 +10,7 @@ import top.futurenotfound.bookmark.manager.env.UserRoleType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,6 +25,7 @@ import java.util.Date;
 @Data
 @ApiModel(value = "User", description = "用户")
 public class User implements Serializable {
+    @Serial
     private static final long serialVersionUID = -5597402404889688001L;
     @TableId(value = "id")
     @ApiModelProperty("id")

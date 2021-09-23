@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.*;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.env.BookmarkSearchType;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
 import top.futurenotfound.bookmark.manager.exception.BookmarkException;
@@ -22,6 +23,7 @@ import top.futurenotfound.bookmark.manager.util.CurrentLoginUser;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,18 +85,52 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public Page<Bookmark> pageByUserId(String userId, Page<Bookmark> page) {
-        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Bookmark::getUserId, userId)
-                .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                .orderByDesc(Bookmark::getCreateTime);
-        Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-        for (Bookmark bookmark : bookmarkPage.getRecords()) {
-            List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
-            bookmark.setTags(tags);
-            bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
-        }
-        return bookmarkPage;
+    public Page<Bookmark> pageByUserIdAndSearchType(String userId, Integer searchType, Page<Bookmark> page) {
+        return switch (BookmarkSearchType.getByCode(searchType)) {
+            case NORMAL -> {
+                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(Bookmark::getUserId, userId)
+                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
+                        .orderByDesc(Bookmark::getCreateTime);
+                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
+                for (Bookmark bookmark : bookmarkPage.getRecords()) {
+                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+                    bookmark.setTags(tags);
+                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
+                }
+                yield bookmarkPage;
+            }
+            case STAR -> {
+                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(Bookmark::getUserId, userId)
+                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
+                        .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE)
+                        .orderByDesc(Bookmark::getCreateTime);
+                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
+                for (Bookmark bookmark : bookmarkPage.getRecords()) {
+                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+                    bookmark.setTags(tags);
+                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
+                }
+                yield bookmarkPage;
+            }
+            case DELETE -> {
+                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+                queryWrapper.eq(Bookmark::getUserId, userId)
+                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
+                        //仅限30天内已删除数据
+                        .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
+                                DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER))
+                        .orderByDesc(Bookmark::getCreateTime);
+                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
+                for (Bookmark bookmark : bookmarkPage.getRecords()) {
+                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+                    bookmark.setTags(tags);
+                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
+                }
+                yield bookmarkPage;
+            }
+        };
     }
 
     /**

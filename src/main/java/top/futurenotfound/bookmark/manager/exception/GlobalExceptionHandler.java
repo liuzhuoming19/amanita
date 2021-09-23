@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    private ObjectError objectError;
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<String> exceptionHandler(Exception e) {

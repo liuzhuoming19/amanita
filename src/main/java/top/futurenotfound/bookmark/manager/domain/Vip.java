@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import top.futurenotfound.bookmark.manager.env.VipType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 @TableName(value = "vip")
 @Data
 public class Vip implements Serializable {
+    @Serial
     private static final long serialVersionUID = 7374482167723383463L;
     @TableId(value = "id")
     private String id;

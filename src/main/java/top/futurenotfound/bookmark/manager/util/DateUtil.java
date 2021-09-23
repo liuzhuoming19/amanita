@@ -3,6 +3,7 @@ package top.futurenotfound.bookmark.manager.util;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
@@ -33,6 +34,12 @@ public class DateUtil {
         return new Date();
     }
 
+    /**
+     * @param date         日期
+     * @param temporalUnit 单位
+     * @param amountToAdd  增加的值
+     * @see ChronoUnit
+     */
     public static Date add(Date date, TemporalUnit temporalUnit, long amountToAdd) {
         LocalDateTime localDateTime = dateToLocalDateTime(date);
         localDateTime = localDateTime.plus(amountToAdd, temporalUnit);

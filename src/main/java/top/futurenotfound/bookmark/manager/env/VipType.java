@@ -30,15 +30,11 @@ public enum VipType {
     private Integer code;
 
     public static VipType getByCode(Integer code) {
-        switch (code) {
-            case 0:
-                return DONATE;
-            case 1:
-                return FREE;
-            case 2:
-                return PAY;
-            default:
-                return null;
-        }
+        return switch (code) {
+            case 0 -> DONATE;
+            case 1 -> FREE;
+            case 2 -> PAY;
+            default -> null;
+        };
     }
 }
