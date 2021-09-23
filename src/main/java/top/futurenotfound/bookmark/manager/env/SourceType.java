@@ -1,5 +1,8 @@
 package top.futurenotfound.bookmark.manager.env;
 
+import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
+
 /**
  * 请求来源
  *
@@ -21,10 +24,11 @@ public enum SourceType {
     ;
 
     public static SourceType getByName(String name) {
+        if (name == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
         return switch (name) {
             case "WEB" -> WEB;
             case "API" -> API;
-            default -> null;
+            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
         };
     }
 }

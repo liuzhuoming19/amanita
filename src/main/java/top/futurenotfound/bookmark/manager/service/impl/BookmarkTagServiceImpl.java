@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.domain.BookmarkTag;
 import top.futurenotfound.bookmark.manager.domain.Tag;
+import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.mapper.BookmarkTagMapper;
 import top.futurenotfound.bookmark.manager.service.BookmarkTagService;
 
@@ -57,6 +59,9 @@ public class BookmarkTagServiceImpl implements BookmarkTagService {
 
     @Override
     public BookmarkTag save(BookmarkTag bookmarkTag) {
+        BookmarkTag bookmarkTagDb = getByBookmarkIdAndTagId(bookmarkTag.getBookmarkId(), bookmarkTag.getTagId());
+        if (bookmarkTagDb != null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_TAG_IS_ALREADY_EXIST);
+
         bookmarkTagMapper.insert(bookmarkTag);
         return getById(bookmarkTag.getId());
     }
@@ -64,6 +69,14 @@ public class BookmarkTagServiceImpl implements BookmarkTagService {
     @Override
     public BookmarkTag getById(String id) {
         return bookmarkTagMapper.selectById(id);
+    }
+
+    @Override
+    public BookmarkTag getByBookmarkIdAndTagId(String bookmarkId, String tagId) {
+        LambdaQueryWrapper<BookmarkTag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BookmarkTag::getBookmarkId, bookmarkId)
+                .eq(BookmarkTag::getTagId, tagId);
+        return bookmarkTagMapper.selectOne(queryWrapper);
     }
 }
 

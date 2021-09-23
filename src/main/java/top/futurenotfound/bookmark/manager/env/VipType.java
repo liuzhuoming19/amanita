@@ -2,6 +2,8 @@ package top.futurenotfound.bookmark.manager.env;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import top.futurenotfound.bookmark.manager.exception.BookmarkException;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 
 /**
  * 会员类型
@@ -30,11 +32,12 @@ public enum VipType {
     private Integer code;
 
     public static VipType getByCode(Integer code) {
+        if (code == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
         return switch (code) {
             case 0 -> DONATE;
             case 1 -> FREE;
             case 2 -> PAY;
-            default -> null;
+            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
         };
     }
 }

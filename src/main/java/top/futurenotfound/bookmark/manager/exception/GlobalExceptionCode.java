@@ -18,7 +18,6 @@ public enum GlobalExceptionCode implements ExceptionCode {
     SUCCESS("00000", "success"),
     FAIL("00001", "fail"),
 
-
     TOKEN_EXPIRED("00100", "token不存在或者已过期"),
     USERNAME_WAS_USED("00101", "用户名已被使用"),
     USERNAME_OR_PASSWORD_NOT_MATCH("00102", "用户名或者密码不匹配"),
@@ -36,11 +35,13 @@ public enum GlobalExceptionCode implements ExceptionCode {
     BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),
     BOOKMARK_TAG_NOT_EXIST("00202", "书签标签不存在"),
     BOOKMARK_IS_ALREADY_DELETED("00203", "书签已删除"),
+    BOOKMARK_TAG_IS_ALREADY_EXIST("00204", "书签标签已存在"),
 
 
     CONTENT_EXTRACTOR_FAIL("10001", "网页正文抽取失败"),
 
-    BEAN_COPY_ERROR("11000", "bean赋值错误"),
+    BEAN_ERROR("11000", "bean操作错误"),
+    ENUM_ERROR("11001", "enum操作错误"),
     ;
 
     private String code;

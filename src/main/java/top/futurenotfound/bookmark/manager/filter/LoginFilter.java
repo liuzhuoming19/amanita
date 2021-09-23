@@ -45,21 +45,15 @@ public class LoginFilter implements Filter {
      * 不登录就可以访问
      */
     private static final List<String> NOT_LOGIN_ALLOW_URL_LIST = List.of(
-            //static
             "/favicon.ico",
             "/css/**",
             "/js/**",
-            //swagger
             "/doc.html",
             "/webjars/**",
             "/swagger**",
-            "/v3/**"
-            //other
-    );
-    //不需登录但需标注来源
-    private static final List<String> NEED_SOURCE_URL_LIST = List.of(
-            //登录
-            "/login/**"
+            "/v3/**",
+            "/login/**",
+            "/redirect/**"
     );
     /**
      * 登录后无需权限配置就可以访问
@@ -125,29 +119,23 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        //除静态资源和登录接口login之外其他请求必须携带请求来源标识source
         String source = req.getHeader(Constant.HEADER_SOURCE);
-
         if (StringUtil.isEmpty(source)) {
             sendError(resp, GlobalExceptionCode.SOURCE_IS_REQUIRED);
             return;
         }
 
         SourceType sourceType = SourceType.getByName(source);
-
         if (sourceType == null) {
             sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
-            return;
-        }
-
-        if (matchAny(NEED_SOURCE_URL_LIST, url)) {
-            chain.doFilter(req, resp);
             return;
         }
 
         //当前认证用户
         User user;
         switch (sourceType) {
-            case WEB: //jwt验证
+            case WEB -> { //jwt验证
                 String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
                 if (StringUtil.isEmpty(token)) {
                     sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
@@ -160,8 +148,8 @@ public class LoginFilter implements Filter {
                     sendError(resp, GlobalExceptionCode.TOKEN_ERROR);
                     return;
                 }
-                break;
-            case API: //access验证
+            }
+            case API -> { //access验证
                 String accessKey = req.getHeader(Constant.HEADER_ACCESS_KEY);
                 String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
                 Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
@@ -176,10 +164,11 @@ public class LoginFilter implements Filter {
                     sendError(resp, GlobalExceptionCode.NO_AUTH);
                     return;
                 }
-                break;
-            default:
+            }
+            default -> {
                 sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
                 return;
+            }
         }
 
         if (user == null) {

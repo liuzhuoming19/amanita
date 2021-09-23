@@ -24,7 +24,7 @@ public class BeanUtil {
             return t;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("{}", e);
-            throw new BookmarkException(GlobalExceptionCode.BEAN_COPY_ERROR);
+            throw new BookmarkException(GlobalExceptionCode.BEAN_ERROR);
         }
     }
 }

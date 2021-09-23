@@ -32,4 +32,6 @@ public interface BookmarkTagService {
     BookmarkTag save(BookmarkTag bookmarkTag);
 
     BookmarkTag getById(String id);
+
+    BookmarkTag getByBookmarkIdAndTagId(String bookmarkId, String tagId);
 }

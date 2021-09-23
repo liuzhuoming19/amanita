@@ -3,6 +3,7 @@ package top.futurenotfound.bookmark.manager.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import top.futurenotfound.bookmark.manager.domain.Bookmark;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.dto.BookmarkSearchDTO;
 
 /**
  * 书签
@@ -11,7 +12,7 @@ import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
  */
 public interface BookmarkService {
 
-    Page<Bookmark> pageByUserIdAndSearchType(String userId, Integer searchType, Page<Bookmark> page);
+    Page<Bookmark> pageByUserIdAndSearchType(String userId, BookmarkSearchDTO bookmarkSearchDTO, Page<Bookmark> page);
 
     Bookmark getById(String id);
 

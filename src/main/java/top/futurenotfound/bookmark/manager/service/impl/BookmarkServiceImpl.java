@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.*;
 import top.futurenotfound.bookmark.manager.dto.BookmarkDTO;
+import top.futurenotfound.bookmark.manager.dto.BookmarkSearchDTO;
+import top.futurenotfound.bookmark.manager.env.BookmarkSearchKeywordType;
 import top.futurenotfound.bookmark.manager.env.BookmarkSearchType;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.UserRoleType;
@@ -85,52 +87,53 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public Page<Bookmark> pageByUserIdAndSearchType(String userId, Integer searchType, Page<Bookmark> page) {
-        return switch (BookmarkSearchType.getByCode(searchType)) {
+    public Page<Bookmark> pageByUserIdAndSearchType(String userId, BookmarkSearchDTO bookmarkSearchDTO, Page<Bookmark> page) {
+        LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
+        //基础条件
+        queryWrapper.eq(Bookmark::getUserId, userId)
+                .orderByDesc(Bookmark::getCreateTime);
+        //查询类型条件
+        BookmarkSearchType bookmarkSearchType = BookmarkSearchType.getByCode(bookmarkSearchDTO.getSearchType());
+        switch (bookmarkSearchType) {
             case NORMAL -> {
-                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.eq(Bookmark::getUserId, userId)
-                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                        .orderByDesc(Bookmark::getCreateTime);
-                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-                for (Bookmark bookmark : bookmarkPage.getRecords()) {
-                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
-                    bookmark.setTags(tags);
-                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
-                }
-                yield bookmarkPage;
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
             }
             case STAR -> {
-                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.eq(Bookmark::getUserId, userId)
-                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                        .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE)
-                        .orderByDesc(Bookmark::getCreateTime);
-                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-                for (Bookmark bookmark : bookmarkPage.getRecords()) {
-                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
-                    bookmark.setTags(tags);
-                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
-                }
-                yield bookmarkPage;
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
+                        .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE);
             }
             case DELETE -> {
-                LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-                queryWrapper.eq(Bookmark::getUserId, userId)
-                        .eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
                         //仅限30天内已删除数据
                         .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
-                                DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER))
-                        .orderByDesc(Bookmark::getCreateTime);
-                Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-                for (Bookmark bookmark : bookmarkPage.getRecords()) {
-                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
-                    bookmark.setTags(tags);
-                    bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
-                }
-                yield bookmarkPage;
+                                DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
             }
-        };
+            default -> {
+                return new Page<>();
+            }
+        }
+        //关键字条件
+        try {
+            BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
+            switch (bookmarkSearchKeywordType) {
+                case BOOKMARK -> {
+                    queryWrapper.like(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()), Bookmark::getTitle, bookmarkSearchDTO.getKeyword());
+                }
+                case TAG -> {
+                    //TODO 暂未想好如何实现，也许需要 mapper xml
+                }
+                default -> {
+                }
+            }
+        } catch (BookmarkException ignored) {
+        }
+        Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
+        for (Bookmark bookmark : bookmarkPage.getRecords()) {
+            List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+            bookmark.setTags(tags);
+            bookmark.setUrl(customProperties.getRedirectUrl() + bookmark.getId());
+        }
+        return bookmarkPage;
     }
 
     /**
@@ -224,7 +227,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         }
 
         //特殊情况下的参数补全
-        if (StringUtil.isEmpty(title)) {
+        if (StringUtil.isEmpty(bookmark.getTitle())) {
             bookmark.setTitle(url);
         }
 

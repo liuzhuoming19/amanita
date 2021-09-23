@@ -1,5 +1,7 @@
 package top.futurenotfound.bookmark.manager.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +25,12 @@ import top.futurenotfound.bookmark.manager.util.StringUtil;
 @Controller
 @RequestMapping("redirect")
 @AllArgsConstructor
+@Api(value = "RedirectController", tags = "重定向Controller")
 public class RedirectController {
     private final BookmarkService bookmarkService;
 
     @GetMapping("{bookmarkId}")
+    @ApiOperation("重定向")
     public String redirect(@PathVariable String bookmarkId) {
         Bookmark bookmark = bookmarkService.getById(bookmarkId);
         User user = CurrentLoginUser.get();

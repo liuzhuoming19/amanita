@@ -1,5 +1,6 @@
 package top.futurenotfound.bookmark.manager.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class LoginController {
 
     @GetMapping
     @ApiOperation("登陆")
+    @ApiOperationSupport(ignoreParameters = {"Source"})
     public ResponseEntity<TokenEntity> login(@RequestParam String username,
                                              @RequestParam String password) {
         User user = userService.getByUsername(username);
