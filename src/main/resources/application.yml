@@ -13,11 +13,13 @@ mybatis-plus:
 
 knife4j:
   enable: true
-  
+
 #自定义配置参数
 custom:
   token-expire-time-amount: 24
   token-expire-time-unit: hours
+  refresh-token-expire-time-amount: 7
+  refresh-token-expire-time-unit: days
   redirect-url: "https://futurenotfound.top/redirect/"
   user-bookmark-num-max: 50
   access-key-length: 32

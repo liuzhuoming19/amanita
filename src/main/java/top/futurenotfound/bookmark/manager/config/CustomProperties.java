@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 自定义配置参数
@@ -23,6 +24,14 @@ public class CustomProperties {
      * token过期时间数值
      */
     private Long tokenExpireTimeAmount;
+    /**
+     * 刷新token过期时间单位
+     */
+    private TimeUnit refreshTokenExpireTimeUnit;
+    /**
+     * 刷新token过期时间数值
+     */
+    private Long refreshTokenExpireTimeAmount;
 
     /**
      * 书签重定向url

@@ -67,7 +67,7 @@ public class Knife4jConfiguration {
                         .securityReferences(defaultAuth())
                         .operationSelector(
                                 operationContext ->
-                                        !operationContext.requestMappingPattern().matches("/login/*")
+                                        !operationContext.requestMappingPattern().matches("/token/*")
                                                 && !operationContext.requestMappingPattern().matches("/rediret/*")
                         )
                         .build()

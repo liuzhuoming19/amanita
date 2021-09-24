@@ -22,8 +22,10 @@ import java.util.Date;
 public class TokenEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = -1770994054516301117L;
-    @ApiModelProperty("token")
-    private String token;
+    @ApiModelProperty("access_token")
+    private String access_token;
+    @ApiModelProperty("refresh_token")
+    private String refresh_token;
     @ApiModelProperty("token创建时间")
     private Date createTime;
     @ApiModelProperty("token过期时间")

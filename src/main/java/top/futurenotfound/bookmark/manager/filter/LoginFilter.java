@@ -52,7 +52,7 @@ public class LoginFilter implements Filter {
             "/webjars/**",
             "/swagger**",
             "/v3/**",
-            "/login/**",
+            "/token/**",
             "/redirect/**"
     );
     /**
@@ -119,7 +119,7 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        //除静态资源和登录接口login之外其他请求必须携带请求来源标识source
+        //除静态资源和获取token接口之外其他请求必须携带请求来源标识source
         String source = req.getHeader(Constant.HEADER_SOURCE);
         if (StringUtil.isEmpty(source)) {
             sendError(resp, GlobalExceptionCode.SOURCE_IS_REQUIRED);

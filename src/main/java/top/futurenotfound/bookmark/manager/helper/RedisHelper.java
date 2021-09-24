@@ -32,4 +32,8 @@ public class RedisHelper<T> {
         set(key, value);
         expire(key, timeAmount, timeUnit);
     }
+
+    public void del(String key) {
+        redisTemplate.delete(key);
+    }
 }

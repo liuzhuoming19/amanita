@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.TokenEntity;
 import top.futurenotfound.bookmark.manager.env.Constant;
+import top.futurenotfound.bookmark.manager.env.RedisKey;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
@@ -24,6 +25,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class JwtHelper {
     private final CustomProperties customProperties;
+    private final RedisHelper<String> redisHelper;
 
     public TokenEntity create(String username, String role) {
         Date now = DateUtil.now();
@@ -34,8 +36,13 @@ public class JwtHelper {
                 Constant.JWT_USERNAME, username,
                 RegisteredPayload.EXPIRES_AT, expiredTime);
 
-        String token = JWTUtil.createToken(payload, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
-        return new TokenEntity(token, now, expiredTime);
+        String accessToken = JWTUtil.createToken(payload, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
+        String refreshToken = RandomStringUtil.generateRandomString(32);
+
+        redisHelper.setEx(RedisKey.REFRESH_TOKEN + refreshToken, username,
+                customProperties.getRefreshTokenExpireTimeAmount(), customProperties.getRefreshTokenExpireTimeUnit());
+
+        return new TokenEntity(accessToken, refreshToken, now, expiredTime);
     }
 
     public String getUsername(String token) {
