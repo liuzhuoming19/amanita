@@ -1,6 +1,6 @@
 create table if not exists bookmark
 (
-    id              varchar(32)         not null
+    id              varchar(36)         not null
         constraint bookmark_pk
             primary key,
     url             varchar(255)        not null,
@@ -11,11 +11,13 @@ create table if not exists bookmark
     excerpt         varchar(500),
     is_read         integer   default 0 not null,
     is_invalid      integer   default 0 not null,
-    user_id         varchar(32)         not null,
+    user_id         varchar(36)         not null,
     note            varchar(500),
     first_image_url varchar(500),
     first_read_time timestamp,
-    is_starred      integer   default 0 not null
+    is_starred      integer   default 0 not null,
+    is_deleted      integer   default 0,
+    delete_time     timestamp
 );
 
 comment on table bookmark is '书签';
@@ -38,12 +40,16 @@ comment on column bookmark.first_read_time is '第一次阅读时间';
 
 comment on column bookmark.is_starred is '是否收藏 0否 1是';
 
+comment on column bookmark.is_deleted is '是否已删除 0否1是';
+
+comment on column bookmark.delete_time is '被删除时间';
+
 alter table bookmark
     owner to postgres;
 
 create table if not exists "user"
 (
-    id          varchar(32)  not null
+    id          varchar(36)  not null
         constraint user_pk
             primary key,
     username    varchar(15)  not null,
@@ -78,10 +84,10 @@ create unique index if not exists user_id_uindex
 
 create table if not exists user_access
 (
-    id          varchar(32) not null
+    id          varchar(36) not null
         constraint user_access_pk
             primary key,
-    user_id     varchar(32) not null,
+    user_id     varchar(36) not null,
     access_key  varchar(50) not null,
     secret_key  varchar(50) not null,
     create_time timestamp default CURRENT_TIMESTAMP,
@@ -104,16 +110,16 @@ create unique index if not exists user_access_id_uindex
 
 create table if not exists user_setting
 (
-    id                                 varchar(32)         not null
+    id                                  varchar(36)         not null
         constraint user_setting_pk
             primary key,
-    user_id                            varchar(32)         not null,
-    allow_feat_excerpt_page_archive    integer   default 0 not null,
-    allow_feat_bookmark_change_history integer   default 0 not null,
-    create_time                        timestamp default CURRENT_TIMESTAMP,
-    update_time                        timestamp default CURRENT_TIMESTAMP,
-    allow_feat_full_page_archive       integer   default 0 not null,
-    allow_ui_page_lite                 integer   default 0 not null
+    user_id                             varchar(36)         not null,
+    allow_feat_excerpt_page_archive     integer   default 0 not null,
+    allow_feat_bookmark_deleted_history integer   default 0 not null,
+    create_time                         timestamp default CURRENT_TIMESTAMP,
+    update_time                         timestamp default CURRENT_TIMESTAMP,
+    allow_feat_full_page_archive        integer   default 0 not null,
+    allow_ui_page_lite                  integer   default 0 not null
 );
 
 comment on table user_setting is '用户设置';
@@ -122,7 +128,7 @@ comment on column user_setting.user_id is '用户id';
 
 comment on column user_setting.allow_feat_excerpt_page_archive is '是否开启页面简述存档（0否 1是）';
 
-comment on column user_setting.allow_feat_bookmark_change_history is '是否开启书签修改历史（开启后可回溯历史）(0否 1是)';
+comment on column user_setting.allow_feat_bookmark_deleted_history is '是否开启书签修改历史（开启后可回溯历史）(0否 1是)';
 
 comment on column user_setting.allow_feat_full_page_archive is '是否允许全文存档 0否 1是';
 
@@ -139,7 +145,7 @@ create unique index if not exists user_setting_user_id_uindex
 
 create table if not exists tag
 (
-    id          varchar(32) not null
+    id          varchar(36) not null
         constraint tag_pk
             primary key,
     name        varchar(15) not null,
@@ -165,11 +171,11 @@ create unique index if not exists tag_id_uindex
 
 create table if not exists bookmark_tag
 (
-    id          varchar(32) not null
+    id          varchar(36) not null
         constraint bookmark_tag_pk
             primary key,
-    bookmark_id varchar(32) not null,
-    tag_id      varchar(32) not null,
+    bookmark_id varchar(36) not null,
+    tag_id      varchar(36) not null,
     create_time timestamp default CURRENT_TIMESTAMP,
     update_time timestamp default CURRENT_TIMESTAMP
 );
@@ -188,10 +194,10 @@ create unique index if not exists bookmark_tag_id_uindex
 
 create table if not exists vip
 (
-    id          varchar(32) not null
+    id          varchar(36) not null
         constraint vip_pk
             primary key,
-    user_id     varchar(32) not null,
+    user_id     varchar(36) not null,
     start_time  timestamp   not null,
     end_time    timestamp   not null,
     create_time timestamp default CURRENT_TIMESTAMP,
@@ -217,11 +223,11 @@ create unique index if not exists vip_id_uindex
 
 create table if not exists "order"
 (
-    id             varchar(32)   not null
+    id             varchar(36)   not null
         constraint order_pk
             primary key,
     order_no       varchar(20)   not null,
-    user_id        varchar(32)   not null,
+    user_id        varchar(36)   not null,
     amount         numeric       not null,
     discount       numeric   default 0,
     paid_amount    numeric       not null,
@@ -264,10 +270,10 @@ create unique index if not exists order_id_uindex
 
 create table if not exists user_admin
 (
-    id          varchar(32) not null
+    id          varchar(36) not null
         constraint user_admin_pk
             primary key,
-    user_id     varchar(32) not null,
+    user_id     varchar(36) not null,
     create_time timestamp default CURRENT_TIMESTAMP,
     update_time timestamp default CURRENT_TIMESTAMP
 );
@@ -284,12 +290,12 @@ create unique index if not exists user_admin_user_id_uindex
 
 create table if not exists access
 (
-    id          varchar(32)                         not null
+    id          varchar(36)                         not null
         constraint access_pk
             primary key,
     key         varchar(50)                         not null,
     secret      varchar(50)                         not null,
-    user_id     varchar(32)                         not null,
+    user_id     varchar(36)                         not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP not null,
     expire_time timestamp                           not null
@@ -308,25 +314,25 @@ comment on column access.expire_time is '过期时间';
 alter table access
     owner to postgres;
 
-create unique index if not exists access_id_uindex
-    on access (id);
-
 create unique index if not exists access_key_uindex
     on access (key);
 
+create unique index if not exists access_id_uindex
+    on access (id);
+
 create table if not exists invite_code
 (
-    id                    varchar(32)                         not null
+    id                    varchar(36)                         not null
         constraint invite_code_pk
             primary key,
     code                  varchar(20)                         not null,
-    sender_id             varchar(32)                         not null,
+    sender_id             varchar(36)                         not null,
     type                  integer   default 0                 not null,
-    invite_code_reward_id varchar(32),
+    invite_code_reward_id varchar(36),
     expire_time           timestamp                           not null,
     create_time           timestamp default CURRENT_TIMESTAMP not null,
     update_time           timestamp default CURRENT_TIMESTAMP not null,
-    receiver_id           varchar(32),
+    receiver_id           varchar(36),
     receive_time          timestamp
 );
 
@@ -357,7 +363,7 @@ create unique index if not exists invite_code_id_uindex
 
 create table if not exists invite_code_reward
 (
-    id                 varchar(32)                         not null
+    id                 varchar(36)                         not null
         constraint invite_code_reward_pk
             primary key,
     type               integer                             not null,

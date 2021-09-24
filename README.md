@@ -1,6 +1,6 @@
-# 毒蘑菇🍄(BOOKMARK)
+# 毒蘑菇🍄(AMANITA BOOKMARK)
 
-> 毒蘑菇即 poisonous mushrooms。
+> Amanita 即 鹅膏菌属。
 
 | |组件|
 |---|---|

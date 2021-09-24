@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.futurenotfound</groupId>
-    <artifactId>bookmark-manager</artifactId>
+    <artifactId>amanita</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>bookmark-manager</name>
-    <description>bookmark-manager</description>
+    <name>amanita</name>
+    <description>Bookmark manager.</description>
     <properties>
         <java.version>17</java.version>
     </properties>
