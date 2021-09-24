@@ -1,8 +1,8 @@
 package top.futurenotfound.amanita.util;
 
-import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.exception.AuthException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 
 /**
  * 当前登陆用户信息

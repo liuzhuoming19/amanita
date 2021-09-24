@@ -3,10 +3,10 @@ package top.futurenotfound.amanita.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.domain.BookmarkTag;
 import top.futurenotfound.amanita.domain.Tag;
 import top.futurenotfound.amanita.exception.BookmarkException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.mapper.BookmarkTagMapper;
 import top.futurenotfound.amanita.service.BookmarkTagService;
 

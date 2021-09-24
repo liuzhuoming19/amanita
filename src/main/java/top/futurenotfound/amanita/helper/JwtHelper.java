@@ -6,12 +6,12 @@ import cn.hutool.jwt.RegisteredPayload;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import top.futurenotfound.amanita.config.AmanitaProperties;
 import top.futurenotfound.amanita.domain.TokenEntity;
 import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.RedisKey;
 import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
+import top.futurenotfound.amanita.properties.AmanitaProperties;
 import top.futurenotfound.amanita.util.DateUtil;
 import top.futurenotfound.amanita.util.RandomStringUtil;
 import top.futurenotfound.amanita.util.StringUtil;
@@ -31,12 +31,12 @@ public class JwtHelper {
     private final RedisHelper<String> redisHelper;
 
     public TokenEntity create(String username, String role) {
-        String tokenSignKey = amanitaProperties.getTokenSignKey();
+        String tokenSignKey = amanitaProperties.getToken().getSignKey();
         if (StringUtil.isEmpty(tokenSignKey)) throw new AuthException(GlobalExceptionCode.JWT_SIGN_KEY_IS_REQUIRED);
 
         Date now = DateUtil.now();
         Date expiredTime = DateUtil.add(now,
-                amanitaProperties.getTokenExpireTimeUnit(), amanitaProperties.getTokenExpireTimeAmount());
+                amanitaProperties.getToken().getExpireTimeUnit(), amanitaProperties.getToken().getExpireTimeAmount());
         ImmutableMap<String, Object> payload = ImmutableMap.of(
                 Constant.JWT_ROLE, role,
                 Constant.JWT_USERNAME, username,
@@ -46,7 +46,8 @@ public class JwtHelper {
         String refreshToken = RandomStringUtil.generateRandomString(32);
 
         redisHelper.setEx(RedisKey.REFRESH_TOKEN + refreshToken, username,
-                amanitaProperties.getRefreshTokenExpireTimeAmount(), amanitaProperties.getRefreshTokenExpireTimeUnit());
+                amanitaProperties.getToken().getRefreshExpireTimeAmount(),
+                amanitaProperties.getToken().getRefreshExpireTimeUnit());
 
         return new TokenEntity(accessToken, refreshToken, now, expiredTime);
     }
@@ -62,7 +63,7 @@ public class JwtHelper {
     }
 
     public void verify(String token) {
-        String tokenSignKey = amanitaProperties.getTokenSignKey();
+        String tokenSignKey = amanitaProperties.getToken().getSignKey();
         if (StringUtil.isEmpty(tokenSignKey)) throw new AuthException(GlobalExceptionCode.JWT_SIGN_KEY_IS_REQUIRED);
 
         if (StringUtil.isEmpty(token))

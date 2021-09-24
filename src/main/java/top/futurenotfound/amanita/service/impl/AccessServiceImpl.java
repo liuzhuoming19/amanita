@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.amanita.config.AmanitaProperties;
 import top.futurenotfound.amanita.domain.Access;
 import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.mapper.AccessMapper;
+import top.futurenotfound.amanita.properties.AmanitaProperties;
 import top.futurenotfound.amanita.service.AccessService;
 import top.futurenotfound.amanita.util.DateUtil;
 import top.futurenotfound.amanita.util.PasswordUtil;
@@ -35,17 +35,17 @@ public class AccessServiceImpl implements AccessService {
         //accessKey不可重复
         String accessKey;
         while (true) {
-            accessKey = RandomStringUtil.generateRandomString(amanitaProperties.getAccessKeyLength());
+            accessKey = RandomStringUtil.generateRandomString(amanitaProperties.getAccess().getKeyLength());
             LambdaQueryWrapper<Access> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(Access::getKey, accessKey);
             Access accessDb = accessMapper.selectOne(queryWrapper);
             if (accessDb == null) break;
         }
-        String accessSecret = RandomStringUtil.generateRandomString(amanitaProperties.getAccessSecretLength());
+        String accessSecret = RandomStringUtil.generateRandomString(amanitaProperties.getAccess().getSecretLength());
         access.setKey(accessKey);
         //使用加密后的secret
         access.setSecret(PasswordUtil.compute(accessSecret));
-        access.setExpireTime(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, amanitaProperties.getAccessExpireDays()));
+        access.setExpireTime(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, amanitaProperties.getAccess().getExpireDays()));
         access.setUserId(userId);
         accessMapper.insert(access);
         //返回secret原串
@@ -57,7 +57,7 @@ public class AccessServiceImpl implements AccessService {
     public Access regenerateAccess(String id) {
         Access access = accessMapper.selectById(id);
         if (access == null) throw new AuthException(GlobalExceptionCode.ACCESS_EXPIRED);
-        String accessSecret = RandomStringUtil.generateRandomString(amanitaProperties.getAccessSecretLength());
+        String accessSecret = RandomStringUtil.generateRandomString(amanitaProperties.getAccess().getSecretLength());
         //使用加密后的secret
         access.setSecret(PasswordUtil.compute(accessSecret));
         access.setUpdateTime(DateUtil.now());

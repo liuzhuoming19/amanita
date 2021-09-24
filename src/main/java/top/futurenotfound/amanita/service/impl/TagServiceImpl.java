@@ -4,18 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.amanita.env.RedisKey;
-import top.futurenotfound.amanita.helper.RedisHelper;
-import top.futurenotfound.amanita.service.BookmarkTagService;
-import top.futurenotfound.amanita.util.RandomColorCodeUtil;
 import top.futurenotfound.amanita.domain.BookmarkTag;
 import top.futurenotfound.amanita.domain.Tag;
+import top.futurenotfound.amanita.env.RedisKey;
+import top.futurenotfound.amanita.helper.RedisHelper;
 import top.futurenotfound.amanita.mapper.TagMapper;
+import top.futurenotfound.amanita.service.BookmarkTagService;
 import top.futurenotfound.amanita.service.TagService;
+import top.futurenotfound.amanita.util.RandomColorCodeUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class TagServiceImpl implements TagService {
                 .distinct()
                 .collect(Collectors.toList());
         if (tagIds.isEmpty()) return Collections.emptyList();
-        return tagMapper.selectBatchIds(tagIds);
+        return tagMapper.selectBatchIds(tagIds).stream().filter(Objects::nonNull).toList();
     }
 
     @Override

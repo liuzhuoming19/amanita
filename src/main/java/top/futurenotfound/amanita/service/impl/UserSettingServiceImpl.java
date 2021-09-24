@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import top.futurenotfound.amanita.service.UserSettingService;
 import top.futurenotfound.amanita.domain.UserSetting;
 import top.futurenotfound.amanita.mapper.UserSettingMapper;
+import top.futurenotfound.amanita.service.UserSettingService;
 
 /**
  * 用户设置

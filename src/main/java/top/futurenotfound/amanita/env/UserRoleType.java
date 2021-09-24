@@ -2,8 +2,8 @@ package top.futurenotfound.amanita.env;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.exception.BookmarkException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 
 /**
  * 用户角色类型

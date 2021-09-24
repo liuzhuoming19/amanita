@@ -7,13 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import top.futurenotfound.amanita.exception.GlobalExceptionCode;
-import top.futurenotfound.amanita.util.CurrentLoginUser;
 import top.futurenotfound.amanita.domain.Bookmark;
 import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.BookmarkException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.service.BookmarkService;
+import top.futurenotfound.amanita.util.CurrentLoginUser;
 import top.futurenotfound.amanita.util.DateUtil;
 import top.futurenotfound.amanita.util.StringUtil;
 

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import top.futurenotfound.amanita.config.AmanitaProperties;
 import top.futurenotfound.amanita.domain.*;
 import top.futurenotfound.amanita.dto.BookmarkDTO;
 import top.futurenotfound.amanita.dto.BookmarkSearchDTO;
@@ -18,6 +17,7 @@ import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.helper.ContentExtractorHelper;
 import top.futurenotfound.amanita.mapper.BookmarkMapper;
+import top.futurenotfound.amanita.properties.AmanitaProperties;
 import top.futurenotfound.amanita.service.BookmarkService;
 import top.futurenotfound.amanita.service.BookmarkTagService;
 import top.futurenotfound.amanita.service.TagService;
@@ -133,7 +133,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         for (Bookmark bookmark : bookmarkPage.getRecords()) {
             List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
             bookmark.setTags(tags);
-            bookmark.setUrl(amanitaProperties.getRedirectUrl() + bookmark.getId());
+            bookmark.setUrl(amanitaProperties.getBookmark().getRedirectUrl() + bookmark.getId());
         }
         return bookmarkPage;
     }
@@ -207,7 +207,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         if (!UserRoleType.VIP.getName().equals(user.getRole())) {
             //普通用户可收藏书签数量上限
-            if (count(user.getId()) >= amanitaProperties.getUserBookmarkNumMax()) {
+            if (count(user.getId()) >= amanitaProperties.getBookmark().getUserNumMax()) {
                 throw new BookmarkException(GlobalExceptionCode.USER_HAS_MAX_BOOKMARKS);
             }
         }

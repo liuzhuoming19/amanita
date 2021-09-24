@@ -2,8 +2,8 @@ package top.futurenotfound.amanita.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.exception.BookmarkException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 
 import java.lang.reflect.InvocationTargetException;
 

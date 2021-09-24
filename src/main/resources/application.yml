@@ -15,13 +15,20 @@ mybatis-plus:
 knife4j:
   enable: true
 
+logging:
+  level:
+    top.futurenotfound.amanita.mapper: debug
+
 #自定义配置参数
 amanita:
-  token-expire-time-amount: 24
-  token-expire-time-unit: hours
-  refresh-token-expire-time-amount: 7
-  refresh-token-expire-time-unit: days
-  access-key-length: 32
-  access-secret-length: 32
-  access-expire-days: 90
-  user-bookmark-num-max: 50
+  token:
+    expire-time-amount: 24
+    expire-time-unit: hours
+    refresh-expire-time-amount: 7
+    refresh-expire-time-unit: days
+  access:
+    key-length: 32
+    secret-length: 32
+    expire-days: 90
+  bookmark:
+    user-num-max: 50
