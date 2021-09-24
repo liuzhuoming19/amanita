@@ -10,7 +10,10 @@ import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.TokenEntity;
 import top.futurenotfound.bookmark.manager.env.Constant;
 import top.futurenotfound.bookmark.manager.env.RedisKey;
+import top.futurenotfound.bookmark.manager.exception.AuthException;
+import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
+import top.futurenotfound.bookmark.manager.util.RandomStringUtil;
 import top.futurenotfound.bookmark.manager.util.StringUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +31,9 @@ public class JwtHelper {
     private final RedisHelper<String> redisHelper;
 
     public TokenEntity create(String username, String role) {
+        String tokenSignKey = customProperties.getTokenSignKey();
+        if (StringUtil.isEmpty(tokenSignKey)) throw new AuthException(GlobalExceptionCode.JWT_SIGN_KEY_IS_REQUIRED);
+
         Date now = DateUtil.now();
         Date expiredTime = DateUtil.add(now,
                 customProperties.getTokenExpireTimeUnit(), customProperties.getTokenExpireTimeAmount());
@@ -36,7 +42,7 @@ public class JwtHelper {
                 Constant.JWT_USERNAME, username,
                 RegisteredPayload.EXPIRES_AT, expiredTime);
 
-        String accessToken = JWTUtil.createToken(payload, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
+        String accessToken = JWTUtil.createToken(payload, tokenSignKey.getBytes(StandardCharsets.UTF_8));
         String refreshToken = RandomStringUtil.generateRandomString(32);
 
         redisHelper.setEx(RedisKey.REFRESH_TOKEN + refreshToken, username,
@@ -56,9 +62,12 @@ public class JwtHelper {
     }
 
     public void verify(String token) {
+        String tokenSignKey = customProperties.getTokenSignKey();
+        if (StringUtil.isEmpty(tokenSignKey)) throw new AuthException(GlobalExceptionCode.JWT_SIGN_KEY_IS_REQUIRED);
+
         if (StringUtil.isEmpty(token))
             throw new JWTException(StringUtil.format("JWT 解析失败----【{}】", token));
-        boolean tf = JWTUtil.verify(token, Constant.JWT_SIGN_KEY.getBytes(StandardCharsets.UTF_8));
+        boolean tf = JWTUtil.verify(token, tokenSignKey.getBytes(StandardCharsets.UTF_8));
         if (!tf)
             throw new JWTException(StringUtil.format("JWT 解析失败----【{}】", token));
     }

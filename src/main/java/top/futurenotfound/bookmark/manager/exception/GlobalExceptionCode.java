@@ -31,6 +31,7 @@ public enum GlobalExceptionCode implements ExceptionCode {
     NO_ROUTE_ERROR("00110", "无效请求"),
     PARAMETER_ERROR("00111", "参数错误"),
     REFRESH_TOKEN_EXPIRED("00112", "刷新token已过期"),
+    JWT_SIGN_KEY_IS_REQUIRED("00113", "jwt签名密钥不能为空"),
 
     BOOKMARK_NOT_EXIST("00200", "书签不存在"),
     BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),

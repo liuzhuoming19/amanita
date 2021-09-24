@@ -32,6 +32,10 @@ public class CustomProperties {
      * 刷新token过期时间数值
      */
     private Long refreshTokenExpireTimeAmount;
+    /**
+     * jwt签名key
+     */
+    private String tokenSignKey;
 
     /**
      * 书签重定向url

@@ -9,11 +9,11 @@ import top.futurenotfound.bookmark.manager.config.CustomProperties;
 import top.futurenotfound.bookmark.manager.domain.Access;
 import top.futurenotfound.bookmark.manager.exception.AuthException;
 import top.futurenotfound.bookmark.manager.exception.GlobalExceptionCode;
-import top.futurenotfound.bookmark.manager.helper.RandomStringUtil;
 import top.futurenotfound.bookmark.manager.mapper.AccessMapper;
 import top.futurenotfound.bookmark.manager.service.AccessService;
 import top.futurenotfound.bookmark.manager.util.DateUtil;
 import top.futurenotfound.bookmark.manager.util.PasswordUtil;
+import top.futurenotfound.bookmark.manager.util.RandomStringUtil;
 
 import java.time.temporal.ChronoUnit;
 

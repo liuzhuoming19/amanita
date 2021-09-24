@@ -20,8 +20,7 @@ custom:
   token-expire-time-unit: hours
   refresh-token-expire-time-amount: 7
   refresh-token-expire-time-unit: days
-  redirect-url: "https://futurenotfound.top/redirect/"
-  user-bookmark-num-max: 50
   access-key-length: 32
   access-secret-length: 32
   access-expire-days: 90
+  user-bookmark-num-max: 50
