@@ -15,6 +15,7 @@ import java.util.UUID;
 @Component
 public class IdGenerator implements IdentifierGenerator {
     @Override
+    @Deprecated
     public Number nextId(Object entity) {
         throw new BookmarkException(GlobalExceptionCode.ID_GENERATE_ERROR);
     }

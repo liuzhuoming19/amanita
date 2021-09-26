@@ -11,6 +11,8 @@ import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.SourceType;
 import top.futurenotfound.amanita.env.UserRoleType;
+import top.futurenotfound.amanita.exception.AuthException;
+import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.ExceptionCode;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.helper.JwtHelper;
@@ -132,51 +134,59 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        //当前认证用户
+        //当前认证用户（待认证初始化
         User user;
-        switch (sourceType) {
-            case WEB -> { //jwt验证
-                String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
-                if (StringUtil.isEmpty(token)) {
-                    sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
-                    return;
+        try {
+            switch (sourceType) {
+                case WEB -> { //jwt验证
+                    String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
+                    if (StringUtil.isEmpty(token)) {
+                        sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
+                        return;
+                    }
+                    try {
+                        String username = jwtHelper.getUsername(token);
+                        user = userService.getByUsername(username);
+                    } catch (Exception e) {
+                        sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
+                        return;
+                    }
                 }
-                try {
-                    String username = jwtHelper.getUsername(token);
-                    user = userService.getByUsername(username);
-                } catch (Exception e) {
-                    sendError(resp, GlobalExceptionCode.TOKEN_ERROR);
+                case API -> { //access验证
+                    String accessKey = req.getHeader(Constant.HEADER_ACCESS_KEY);
+                    String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
+                    Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
+                    if (access == null) {
+                        sendError(resp, GlobalExceptionCode.ACCESS_EXPIRED);
+                        return;
+                    }
+                    user = userService.getById(access.getUserId());
+                    //只有VIP及ADMIN具备access认证权限
+                    if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName())
+                            && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
+                        sendError(resp, GlobalExceptionCode.NO_AUTH);
+                        return;
+                    }
+                }
+                default -> {
+                    sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
                     return;
                 }
             }
-            case API -> { //access验证
-                String accessKey = req.getHeader(Constant.HEADER_ACCESS_KEY);
-                String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
-                Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
-                if (access == null) {
-                    sendError(resp, GlobalExceptionCode.ACCESS_EXPIRED);
-                    return;
-                }
-                user = userService.getById(access.getUserId());
-                //只有VIP及ADMIN具备access认证权限
-                if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName())
-                        && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
-                    sendError(resp, GlobalExceptionCode.NO_AUTH);
-                    return;
-                }
-            }
-            default -> {
-                sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
+
+            if (user == null) {
+                sendError(resp, GlobalExceptionCode.USER_NOT_EXIST);
                 return;
             }
-        }
-
-        if (user == null) {
-            sendError(resp, GlobalExceptionCode.USER_NOT_EXIST);
+            //存入线程变量
+            CurrentLoginUser.set(user);
+        } catch (AuthException | BookmarkException e) {
+            sendError(resp, e.getExceptionCode());
+            return;
+        } catch (Exception e) {
+            sendError(resp, GlobalExceptionCode.FAIL);
             return;
         }
-        //存入线程变量
-        CurrentLoginUser.set(user);
 
         if (matchAny(LOGIN_ALLOW_URL_LIST, url)) {
             chain.doFilter(req, resp);

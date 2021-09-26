@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookmarkManagerApplication {
+public class AmanitaApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BookmarkManagerApplication.class, args);
+        SpringApplication.run(AmanitaApplication.class, args);
     }
 
 }
