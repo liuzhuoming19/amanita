@@ -6,12 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import top.futurenotfound.amanita.domain.WebExcerptInfo;
 import top.futurenotfound.amanita.domain.WebHtmlInfo;
-import top.futurenotfound.amanita.env.Constant;
+import top.futurenotfound.amanita.util.ImgUrlExtractorStrategy;
 import top.futurenotfound.amanita.util.StringUtil;
 
 import java.io.IOException;
@@ -32,7 +30,7 @@ public class ContentExtractorHelper {
      *
      * @param url url
      */
-    public WebExcerptInfo excerpt(String url) {
+    public static WebExcerptInfo excerpt(String url) {
         URL uRL;
         try {
             uRL = new URL(url);
@@ -44,7 +42,7 @@ public class ContentExtractorHelper {
         try {
             String title = null;
             String excerpt = null;
-            String imageUrl = null;
+            String firstImageUrl = null;
 
             try {
                 News news = ContentExtractor.getNewsByUrl(url);
@@ -60,22 +58,20 @@ public class ContentExtractorHelper {
             } catch (Exception ignored) {
             }
             try {
-                Element element = ContentExtractor.getContentElementByUrl(url);
-                Elements elements = element.getElementsByTag("img");
-                if (!elements.isEmpty()) {
-                    imageUrl = elements.get(0).attr("src");
-                    if (!imageUrl.startsWith(Constant.HTTPS) && !imageUrl.startsWith(Constant.HTTP)) {
-                        imageUrl = null;
-                    }
-                }
+                //拉取首图
+                firstImageUrl = ImgUrlExtractorStrategy.apply(uRL);
             } catch (Exception ignored) {
             }
-            return new WebExcerptInfo(url, uRL.getHost(), title, excerpt, imageUrl);
+            return new WebExcerptInfo(url, uRL.getHost(), title, excerpt, firstImageUrl);
         } catch (Exception e) {
             log.error("{}", e);
             //抽取正文失败
             return new WebExcerptInfo(url, uRL.getHost(), uRL.getHost(), null, null);
         }
+    }
+
+    public static void main(String[] args) {
+        excerpt("https://www.zhihu.com/question/19912421/answer/565144490?utm_medium=social&utm_oi=607907406420774912&utm_source=com.instapaper.android");
     }
 
     /**

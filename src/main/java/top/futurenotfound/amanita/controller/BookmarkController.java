@@ -16,8 +16,6 @@ import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.service.BookmarkService;
-import top.futurenotfound.amanita.service.BookmarkTagService;
-import top.futurenotfound.amanita.service.TagService;
 import top.futurenotfound.amanita.util.CurrentLoginUser;
 import top.futurenotfound.amanita.util.StringUtil;
 
@@ -35,8 +33,6 @@ import java.util.Objects;
 @AllArgsConstructor
 public class BookmarkController {
     private final BookmarkService bookmarkService;
-    private final TagService tagService;
-    private final BookmarkTagService bookmarkTagService;
 
     @GetMapping("{id}")
     @ApiOperation("详情")
