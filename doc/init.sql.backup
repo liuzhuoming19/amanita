@@ -294,7 +294,7 @@ create table if not exists access
         constraint access_pk
             primary key,
     key         varchar(50)                         not null,
-    secret      varchar(50)                         not null,
+    secret      varchar(150)                        not null,
     user_id     varchar(36)                         not null,
     create_time timestamp default CURRENT_TIMESTAMP not null,
     update_time timestamp default CURRENT_TIMESTAMP not null,
@@ -305,7 +305,7 @@ comment on table access is '认证密钥';
 
 comment on column access.key is 'access key';
 
-comment on column access.secret is 'access secret';
+comment on column access.secret is 'access secret（加密过';
 
 comment on column access.user_id is '用户id';
 
