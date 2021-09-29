@@ -18,6 +18,8 @@ import top.futurenotfound.amanita.service.UserService;
 import top.futurenotfound.amanita.util.PasswordUtil;
 import top.futurenotfound.amanita.util.StringUtil;
 
+import javax.validation.Valid;
+
 /**
  * token controller
  *
@@ -48,10 +50,19 @@ public class TokenController {
     @PutMapping
     @ApiOperation("刷新")
     @ApiOperationSupport(ignoreParameters = {"Source"})
-    public ResponseEntity<TokenEntity> update(@RequestHeader String refreshToken) {
-        String refreshTokenKey = RedisKey.REFRESH_TOKEN + refreshToken;
-        String username = redisHelper.get(refreshTokenKey);
+    public ResponseEntity<TokenEntity> update(@Valid @RequestBody TokenEntity refreshEntity) {
+        String refreshToken = refreshEntity.getRefreshToken();
+        String accessToken = refreshEntity.getAccessToken();
+
+        String username = jwtHelper.getUsername(accessToken);
         if (StringUtil.isEmpty(username)) throw new AuthException(GlobalExceptionCode.REFRESH_TOKEN_EXPIRED);
+
+        String refreshTokenKey = RedisKey.REFRESH_TOKEN + username;
+        String refreshTokenJwt = redisHelper.get(refreshTokenKey);
+
+        if (!StringUtil.equals(refreshTokenJwt, refreshToken))
+            throw new AuthException(GlobalExceptionCode.REFRESH_TOKEN_EXPIRED);
+
         User user = userService.getByUsername(username);
         if (user == null) throw new AuthException(GlobalExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());

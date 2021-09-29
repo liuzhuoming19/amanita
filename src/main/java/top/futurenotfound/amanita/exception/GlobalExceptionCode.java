@@ -30,7 +30,7 @@ public enum GlobalExceptionCode implements ExceptionCode {
     TOKEN_ERROR("00109", "token错误"),
     NO_ROUTE_ERROR("00110", "无效请求"),
     PARAMETER_ERROR("00111", "参数错误"),
-    REFRESH_TOKEN_EXPIRED("00112", "刷新token已过期"),
+    REFRESH_TOKEN_EXPIRED("00112", "刷新token不存在或已过期"),
     JWT_SIGN_KEY_IS_REQUIRED("00113", "jwt签名密钥不能为空"),
     ID_GENERATE_ERROR("00114", "通用id生成出现错误"),
 

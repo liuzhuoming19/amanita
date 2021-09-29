@@ -45,7 +45,7 @@ public class JwtHelper {
         String accessToken = JWTUtil.createToken(payload, tokenSignKey.getBytes(StandardCharsets.UTF_8));
         String refreshToken = RandomStringUtil.generateRandomString(32);
 
-        redisHelper.setEx(RedisKey.REFRESH_TOKEN + refreshToken, username,
+        redisHelper.setEx(RedisKey.REFRESH_TOKEN + username, refreshToken,
                 amanitaProperties.getToken().getRefreshExpireTimeAmount(),
                 amanitaProperties.getToken().getRefreshExpireTimeUnit());
 

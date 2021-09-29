@@ -3,7 +3,10 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
   profiles:
-    active: dev
+    active: prod
+
+server:
+  port: 8091
 
 mybatis-plus:
   global-config:
