@@ -33,16 +33,16 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
- * 登录过滤器
+ * 认证过滤器
  *
  * @author liuzhuoming
  */
 @Component
 @Order(2)
-@WebFilter(filterName = "LoginFilter", urlPatterns = "/*")
+@WebFilter(filterName = "AuthFilter", urlPatterns = "/*")
 @RequiredArgsConstructor
 @Slf4j
-public class LoginFilter implements Filter {
+public class AuthFilter implements Filter {
     /**
      * 不登录就可以访问
      */
