@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 import top.futurenotfound.amanita.env.UserRoleType;
 
 import javax.validation.constraints.Email;
@@ -36,6 +37,7 @@ public class User implements Serializable {
     @TableField(value = "username")
     @ApiModelProperty("用户名")
     @NotEmpty
+    @Range(min = 6, max = 12)
     private String username;
     /**
      * 邮箱地址
@@ -51,6 +53,7 @@ public class User implements Serializable {
     @TableField(value = "password")
     @ApiModelProperty("密码")
     @NotEmpty
+    @Range(min = 8, max = 16)
     private String password;
     /**
      * 是否可用（0不可用 1可用）

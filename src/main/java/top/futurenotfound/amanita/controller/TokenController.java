@@ -43,6 +43,7 @@ public class TokenController {
         if (user == null || !PasswordUtil.verify(password, user.getPassword())) {
             throw new AuthException(GlobalExceptionCode.USERNAME_OR_PASSWORD_NOT_MATCH);
         }
+        if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);
         TokenEntity tokenEntity = jwtHelper.create(username, user.getRole());
         return ResponseEntity.ok(tokenEntity);
     }

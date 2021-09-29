@@ -26,8 +26,8 @@ public class UserController {
         return ResponseEntity.ok(userService.getDesensitizedUserByUserName(user.getUsername()));
     }
 
-    //TODO 需设置无需权限即可访问，但要考虑和同controller方法的冲突
-    @PostMapping
+    //需设置无需权限即可访问，但要考虑和同controller方法的冲突
+    @PostMapping("register")
     public ResponseEntity<User> add(User user) {
         return ResponseEntity.ok(userService.save(user));
     }

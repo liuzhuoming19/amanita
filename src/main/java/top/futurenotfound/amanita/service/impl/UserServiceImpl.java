@@ -46,17 +46,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         User usernameUser = getByUsername(user.getUsername());
-        if (!Objects.equals(usernameUser.getId(), user.getId())) {
+        if (usernameUser != null && !Objects.equals(usernameUser.getId(), user.getId())) {
             throw new BookmarkException(GlobalExceptionCode.USERNAME_WAS_USED);
         }
         User emailUser = getByEmail(user.getEmail());
-        if (!Objects.equals(emailUser.getId(), user.getId())) {
+        if (emailUser != null && !Objects.equals(emailUser.getId(), user.getId())) {
             throw new BookmarkException(GlobalExceptionCode.EMAIL_WAS_USED);
         }
 
         String password = PasswordUtil.compute(user.getPassword());
         //重设加密后的密码
         user.setPassword(password);
+        user.setEnabled(0);
         userMapper.insert(user);
         //同时生成用户设置 UserSetting 的数据库数据
         UserSetting userSetting = new UserSetting();
@@ -85,8 +86,7 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getUsername, username);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
-        if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
-        if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);
+        if (user == null) return null;
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
         return user;
@@ -96,8 +96,7 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getEmail, email);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
-        if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
-        if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);
+        if (user == null) return null;
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
         return user;

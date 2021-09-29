@@ -55,7 +55,8 @@ public class AuthFilter implements Filter {
             "/swagger**",
             "/v3/**",
             "/token/**",
-            "/redirect/**"
+            "/redirect/**",
+            "/user/register"
     );
     /**
      * 登录后无需权限配置就可以访问
