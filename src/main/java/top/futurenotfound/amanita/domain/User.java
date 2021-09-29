@@ -56,7 +56,7 @@ public class User implements Serializable {
      */
     @TableField(value = "enabled")
     @ApiModelProperty("是否可用（0不可用 1可用）")
-    private boolean enabled;
+    private Integer enabled;
 
     @TableField(value = "create_time")
     private Date createTime;

@@ -33,6 +33,7 @@ public enum GlobalExceptionCode implements ExceptionCode {
     REFRESH_TOKEN_EXPIRED("00112", "刷新token不存在或已过期"),
     JWT_SIGN_KEY_IS_REQUIRED("00113", "jwt签名密钥不能为空"),
     ID_GENERATE_ERROR("00114", "通用id生成出现错误"),
+    USER_IS_NOT_ENABLE("00105", "用户不可用"),
 
     BOOKMARK_NOT_EXIST("00200", "书签不存在"),
     BOOKMARK_IS_ALREADY_EXIST("00201", "书签已存在"),

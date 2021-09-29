@@ -7,6 +7,7 @@ import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.domain.UserSetting;
 import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.UserRoleType;
+import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.mapper.UserMapper;
@@ -61,9 +62,8 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getUsername, username);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
-        if (user == null) {
-            throw new BookmarkException(GlobalExceptionCode.USER_NOT_EXIST);
-        }
+        if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
+        if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
         return user;
