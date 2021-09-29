@@ -94,6 +94,28 @@ public class BookmarkServiceImpl implements BookmarkService {
         //基础条件
         queryWrapper.eq(Bookmark::getUserId, userId)
                 .orderByDesc(Bookmark::getCreateTime);
+        //关键字条件
+        BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
+        if (BookmarkSearchKeywordType.TAG.equals(bookmarkSearchKeywordType)) {
+            //特殊情况，关联查询使用xml查询，mybatis plus的queryWrapper条件不被使用
+            Page<Bookmark> bookmarkPage = bookmarkMapper.pageByTag(page, userId, bookmarkSearchDTO);
+            for (Bookmark bookmark : bookmarkPage.getRecords()) {
+                List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+                bookmark.setTags(tags);
+                bookmark.setUrl(amanitaProperties.getBookmark().getRedirectUrl() + bookmark.getId());
+            }
+            return bookmarkPage;
+        } else if (BookmarkSearchKeywordType.BOOKMARK.equals(bookmarkSearchKeywordType)) {
+            //标题/url/笔记/摘录 模糊搜索
+            queryWrapper.and(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()),
+                    andQueryWrapper ->
+                            andQueryWrapper
+                                    .like(Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
+                                    .or().like(Bookmark::getUrl, bookmarkSearchDTO.getKeyword())
+                                    .or().like(Bookmark::getExcerpt, bookmarkSearchDTO.getKeyword())
+                                    .or().like(Bookmark::getNote, bookmarkSearchDTO.getKeyword())
+            );
+        }
         //查询类型条件
         BookmarkSearchType bookmarkSearchType = BookmarkSearchType.getByCode(bookmarkSearchDTO.getSearchType());
         switch (bookmarkSearchType) {
@@ -108,25 +130,8 @@ public class BookmarkServiceImpl implements BookmarkService {
                 //do nothing
             }
         }
-        Page<Bookmark> bookmarkPage = new Page<>();
-        //关键字条件
-        try {
-            BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
-            switch (bookmarkSearchKeywordType) {
-                case BOOKMARK -> {
-                    queryWrapper.like(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()), Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
-                            .orderByDesc(Bookmark::getCreateTime);
-                    bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-                }
-                //特殊情况，使用xml查询，mybatis plus的queryWrapper条件不被使用
-                case TAG -> bookmarkPage = bookmarkMapper.pageByTag(page, userId, bookmarkSearchDTO);
-                default -> {
-                    queryWrapper.orderByDesc(Bookmark::getCreateTime);
-                    bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
-                }
-            }
-        } catch (BookmarkException ignored) {
-        }
+        queryWrapper.orderByDesc(Bookmark::getCreateTime);
+        Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
         for (Bookmark bookmark : bookmarkPage.getRecords()) {
             List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
             bookmark.setTags(tags);
@@ -203,11 +208,10 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setUserId(user.getId());
         bookmark.setIsStarred(bookmarkDTO.getIsStarred() == 1 ? 1 : 0);
 
-        if (!UserRoleType.VIP.getName().equals(user.getRole())) {
-            //普通用户可收藏书签数量上限
-            if (count(user.getId()) >= amanitaProperties.getBookmark().getUserNumMax()) {
-                throw new BookmarkException(GlobalExceptionCode.USER_HAS_MAX_BOOKMARKS);
-            }
+        //普通用户可收藏书签数量上限
+        if (!UserRoleType.VIP.getName().equals(user.getRole())
+                && count(user.getId()) >= amanitaProperties.getBookmark().getUserNumMax()) {
+            throw new BookmarkException(GlobalExceptionCode.USER_HAS_MAX_BOOKMARKS);
         }
 
         if (isExistByUserIdAndUrl(user.getId(), url))
@@ -226,15 +230,14 @@ public class BookmarkServiceImpl implements BookmarkService {
             bookmark.setTitle(webExcerptInfo.getTitle());
         }
 
-        //特殊情况下的参数补全
+        //特殊情况下的标题补全为url
         if (StringUtil.isEmpty(bookmark.getTitle())) {
             bookmark.setTitle(url);
         }
 
-        if (UserRoleType.VIP.getName().equals(user.getRole())) {
-            if (Objects.equals(userSetting.getAllowFeatFullPageArchive(), Constant.DATABASE_TRUE)) {
-                //TODO 全文保存
-            }
+        if (UserRoleType.VIP.getName().equals(user.getRole())
+                && Objects.equals(userSetting.getAllowFeatFullPageArchive(), Constant.DATABASE_TRUE)) {
+            //TODO 全文保存
         }
         return bookmark;
     }
