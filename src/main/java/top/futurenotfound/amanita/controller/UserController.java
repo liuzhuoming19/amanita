@@ -21,9 +21,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<User> get() {
-        //非脱敏用户
         User user = CurrentLoginUser.get();
-        return ResponseEntity.ok(userService.getDesensitizedUserByUserName(user.getUsername()));
+        return ResponseEntity.ok(user);
     }
 
     //需设置无需权限即可访问，但要考虑和同controller方法的冲突

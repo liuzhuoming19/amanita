@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
+import top.futurenotfound.amanita.annotation.Sensitive;
 import top.futurenotfound.amanita.env.UserRoleType;
 
 import javax.validation.constraints.Email;
@@ -48,12 +49,13 @@ public class User implements Serializable {
     @NotEmpty
     private String email;
     /**
-     * 密码（加密后）
+     * 密码
      */
     @TableField(value = "password")
     @ApiModelProperty("密码")
     @NotEmpty
     @Range(min = 8, max = 16)
+    @Sensitive
     private String password;
     /**
      * 是否可用（0不可用 1可用）

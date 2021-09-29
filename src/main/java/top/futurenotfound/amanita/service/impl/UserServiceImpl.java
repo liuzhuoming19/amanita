@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.domain.UserSetting;
 import top.futurenotfound.amanita.dto.UserPasswordDTO;
-import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.UserRoleType;
 import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.BookmarkException;
@@ -64,7 +63,7 @@ public class UserServiceImpl implements UserService {
         userSetting.setUserId(user.getId());
         userSettingService.save(userSetting);
 
-        return getDesensitizedUserByUserName(user.getUsername());
+        return user;
     }
 
     @Override
@@ -78,7 +77,7 @@ public class UserServiceImpl implements UserService {
         newUser.setPassword(PasswordUtil.compute(userPasswordDTO.getNewPassword()));
         userMapper.updateById(newUser);
 
-        return getDesensitizedUserByUserName(user.getUsername());
+        return user;
     }
 
     @Override
@@ -99,13 +98,6 @@ public class UserServiceImpl implements UserService {
         if (user == null) return null;
         UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
         user.setRole(userRoleType.getName());
-        return user;
-    }
-
-    @Override
-    public User getDesensitizedUserByUserName(String username) {
-        User user = getByUsername(username);
-        user.setPassword(Constant.DESENSITIZED_PASSWORD);
         return user;
     }
 }
