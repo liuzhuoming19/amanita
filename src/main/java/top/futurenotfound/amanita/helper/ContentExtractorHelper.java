@@ -70,10 +70,6 @@ public class ContentExtractorHelper {
         }
     }
 
-    public static void main(String[] args) {
-        excerpt("https://www.zhihu.com/question/19912421/answer/565144490?utm_medium=social&utm_oi=607907406420774912&utm_source=com.instapaper.android");
-    }
-
     /**
      * 网页全文html代码抽取
      *

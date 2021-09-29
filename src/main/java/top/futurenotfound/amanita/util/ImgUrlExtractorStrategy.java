@@ -100,9 +100,4 @@ public class ImgUrlExtractorStrategy {
         }
         return imgUrl;
     }
-
-    @SneakyThrows
-    public static void main(String[] args) {
-        System.out.println(apply(new URL("https://zhuanlan.zhihu.com/p/406168077")));
-    }
 }
