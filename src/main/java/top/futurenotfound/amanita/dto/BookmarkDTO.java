@@ -26,4 +26,6 @@ public class BookmarkDTO {
     private String note;
     @ApiModelProperty("书签标签组")
     private List<String> tagNames;
+    @ApiModelProperty("是否收藏 0/null/其他-否 1-是")
+    private Integer isStarred;
 }

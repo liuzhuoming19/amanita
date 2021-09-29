@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.futurenotfound.amanita.mapper.BookmarkMapper">
+
+    <select id="pageByTag" resultType="top.futurenotfound.amanita.domain.Bookmark">
+        select distinct bm.*
+        from bookmark bm
+        left join bookmark_tag bt on bm.id = bt.bookmark_id
+        left join tag t on bt.tag_id = t.id
+        <where>
+            bm.user_id = #{userId}
+            <if test="bookmarkSearchDTO.searchType != null">
+                <if test="bookmarkSearchDTO.searchType == 0">
+                    and bm.is_deleted = 0
+                </if>
+                <if test="bookmarkSearchDTO.searchType == 1">
+                    and bm.is_deleted = 0
+                    and bm.is_starred = 1
+                </if>
+                <if test="bookmarkSearchDTO.searchType == 2">
+                    and bm.is_deleted = 1
+                    and (CURRENT_TIMESTAMP + '30 day') &lt;= delete_time
+                </if>
+            </if>
+            and t.name = #{bookmarkSearchDTO.keyword}
+        </where>
+        order by bm.create_time desc
+    </select>
+</mapper>

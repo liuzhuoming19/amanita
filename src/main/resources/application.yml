@@ -3,7 +3,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
   profiles:
-    active: prod
+    active: dev
 
 server:
   port: 8091

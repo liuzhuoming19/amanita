@@ -97,39 +97,36 @@ public class BookmarkServiceImpl implements BookmarkService {
         //查询类型条件
         BookmarkSearchType bookmarkSearchType = BookmarkSearchType.getByCode(bookmarkSearchDTO.getSearchType());
         switch (bookmarkSearchType) {
-            case NORMAL -> {
-                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
-            }
-            case STAR -> {
-                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                        .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE);
-            }
-            case DELETE -> {
-                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
-                        //仅限30天内已删除数据
-                        .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
-                                DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
-            }
+            case NORMAL -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
+            case STAR -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
+                    .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE);
+            case DELETE -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
+                    //仅限30天内已删除数据
+                    .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
+                            DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
             default -> {
-                return new Page<>();
+                //do nothing
             }
         }
+        Page<Bookmark> bookmarkPage = new Page<>();
         //关键字条件
         try {
             BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
             switch (bookmarkSearchKeywordType) {
                 case BOOKMARK -> {
-                    queryWrapper.like(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()), Bookmark::getTitle, bookmarkSearchDTO.getKeyword());
+                    queryWrapper.like(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()), Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
+                            .orderByDesc(Bookmark::getCreateTime);
+                    bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
                 }
-                case TAG -> {
-                    //TODO 暂未想好如何实现，也许需要 mapper xml
-                }
+                //特殊情况，使用xml查询，mybatis plus的queryWrapper条件不被使用
+                case TAG -> bookmarkPage = bookmarkMapper.pageByTag(page, userId, bookmarkSearchDTO);
                 default -> {
+                    queryWrapper.orderByDesc(Bookmark::getCreateTime);
+                    bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
                 }
             }
         } catch (BookmarkException ignored) {
         }
-        Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
         for (Bookmark bookmark : bookmarkPage.getRecords()) {
             List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
             bookmark.setTags(tags);
@@ -204,6 +201,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setTitle(title);
         bookmark.setNote(note);
         bookmark.setUserId(user.getId());
+        bookmark.setIsStarred(bookmarkDTO.getIsStarred() == 1 ? 1 : 0);
 
         if (!UserRoleType.VIP.getName().equals(user.getRole())) {
             //普通用户可收藏书签数量上限
@@ -216,7 +214,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             throw new BookmarkException(GlobalExceptionCode.BOOKMARK_IS_ALREADY_EXIST);
 
         UserSetting userSetting = userSettingService.getByUserId(user.getId());
-        WebExcerptInfo webExcerptInfo = contentExtractorHelper.excerpt(url);
+        WebExcerptInfo webExcerptInfo = ContentExtractorHelper.excerpt(url);
 
         bookmark.setFirstImageUrl(webExcerptInfo.getFirstImageUrl());
         bookmark.setHost(webExcerptInfo.getHost());
