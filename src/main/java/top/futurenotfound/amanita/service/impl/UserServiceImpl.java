@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.domain.UserSetting;
+import top.futurenotfound.amanita.dto.UserPasswordDTO;
 import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.UserRoleType;
 import top.futurenotfound.amanita.exception.AuthException;
@@ -14,6 +15,7 @@ import top.futurenotfound.amanita.mapper.UserMapper;
 import top.futurenotfound.amanita.service.UserRoleService;
 import top.futurenotfound.amanita.service.UserService;
 import top.futurenotfound.amanita.service.UserSettingService;
+import top.futurenotfound.amanita.util.CurrentLoginUser;
 import top.futurenotfound.amanita.util.PasswordUtil;
 
 import java.util.Objects;
@@ -42,11 +44,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
-        User userDb = getByUsername(user.getUsername());
-        if (userDb != null && !Objects.equals(userDb.getId(), user.getId())) {
+    public User save(User user) {
+        User usernameUser = getByUsername(user.getUsername());
+        if (!Objects.equals(usernameUser.getId(), user.getId())) {
             throw new BookmarkException(GlobalExceptionCode.USERNAME_WAS_USED);
         }
+        User emailUser = getByEmail(user.getEmail());
+        if (!Objects.equals(emailUser.getId(), user.getId())) {
+            throw new BookmarkException(GlobalExceptionCode.EMAIL_WAS_USED);
+        }
+
         String password = PasswordUtil.compute(user.getPassword());
         //重设加密后的密码
         user.setPassword(password);
@@ -55,12 +62,39 @@ public class UserServiceImpl implements UserService {
         UserSetting userSetting = new UserSetting();
         userSetting.setUserId(user.getId());
         userSettingService.save(userSetting);
+
+        return getDesensitizedUserByUserName(user.getUsername());
+    }
+
+    @Override
+    public User updatePassword(UserPasswordDTO userPasswordDTO) {
+        User user = CurrentLoginUser.get();
+        if (!PasswordUtil.verify(userPasswordDTO.getPassword(), user.getPassword()))
+            throw new AuthException(GlobalExceptionCode.OLD_PASSWORD_NOT_MATCH);
+
+        User newUser = new User();
+        newUser.setId(user.getId());
+        newUser.setPassword(PasswordUtil.compute(userPasswordDTO.getNewPassword()));
+        userMapper.updateById(newUser);
+
+        return getDesensitizedUserByUserName(user.getUsername());
     }
 
     @Override
     public User getByUsername(String username) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getUsername, username);
+        User user = userMapper.selectOne(userLambdaQueryWrapper);
+        if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
+        if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);
+        UserRoleType userRoleType = userRoleService.getByUserId(user.getId());
+        user.setRole(userRoleType.getName());
+        return user;
+    }
+
+    private User getByEmail(String email) {
+        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        userLambdaQueryWrapper.eq(User::getEmail, email);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
         if (user == null) throw new AuthException(GlobalExceptionCode.USER_NOT_EXIST);
         if (user.getEnabled() == 0) throw new AuthException(GlobalExceptionCode.USER_IS_NOT_ENABLE);

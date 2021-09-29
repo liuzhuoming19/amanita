@@ -43,6 +43,7 @@ public class User implements Serializable {
     @TableField(value = "email")
     @ApiModelProperty("邮箱地址")
     @Email
+    @NotEmpty
     private String email;
     /**
      * 密码（加密后）

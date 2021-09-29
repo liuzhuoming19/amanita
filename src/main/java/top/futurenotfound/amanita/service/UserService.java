@@ -1,6 +1,7 @@
 package top.futurenotfound.amanita.service;
 
 import top.futurenotfound.amanita.domain.User;
+import top.futurenotfound.amanita.dto.UserPasswordDTO;
 
 /**
  * 用户
@@ -21,7 +22,10 @@ public interface UserService {
      */
     User getDesensitizedUserByUserName(String username);
 
-    void save(User user);
+    User save(User user);
 
-    //TODO 缺少更新用户信息
+    /**
+     * 更新密码
+     */
+    User updatePassword(UserPasswordDTO userPasswordDTO);
 }
