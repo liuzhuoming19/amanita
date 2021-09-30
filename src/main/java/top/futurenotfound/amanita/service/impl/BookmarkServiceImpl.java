@@ -128,6 +128,8 @@ public class BookmarkServiceImpl implements BookmarkService {
                     //仅限30天内已删除数据
                     .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
                             DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
+            case NOTE -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
+                    .and(wrapper -> wrapper.isNotNull(Bookmark::getNote).or().ne(Bookmark::getNote, ""));
             default -> {
                 //do nothing
             }

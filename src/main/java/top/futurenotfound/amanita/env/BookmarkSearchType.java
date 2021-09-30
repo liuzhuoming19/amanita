@@ -27,6 +27,10 @@ public enum BookmarkSearchType {
      * 仅限vip
      */
     DELETE(2),
+    /**
+     * 查询已加笔记
+     */
+    NOTE(3),
     ;
 
     private int code;

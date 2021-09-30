@@ -28,8 +28,8 @@ public class BookmarkSearchDTO {
     /**
      * @see BookmarkSearchType
      */
-    @ApiModelProperty(value = "搜索类型 0普通1加星2已删除", example = "0")
+    @ApiModelProperty(value = "搜索类型 0普通1加星2已删除3已有笔记", example = "0")
     @NotNull
-    @Range(min = 0, max = 2)
+    @Range(min = 0, max = 3)
     private Integer searchType;
 }
