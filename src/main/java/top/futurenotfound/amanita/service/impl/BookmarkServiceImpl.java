@@ -88,6 +88,11 @@ public class BookmarkServiceImpl implements BookmarkService {
         return bookmark;
     }
 
+    /**
+     * tag关键字查询sql需和mybatis plus的修改同步
+     *
+     * @see BookmarkMapper#pageByTag(Page, String, BookmarkSearchDTO)
+     */
     @Override
     public Page<Bookmark> pageByUserIdAndSearchType(String userId, BookmarkSearchDTO bookmarkSearchDTO, Page<Bookmark> page) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
