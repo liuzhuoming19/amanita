@@ -23,6 +23,11 @@
                     and bm.is_deleted = 1
                     and (CURRENT_TIMESTAMP + '30 day') &lt;= delete_time
                 </if>
+                <if test="bookmarkSearchDTO.searchType == 3">
+                    and bm.is_deleted = 1
+                    and bm.note is not null
+                    and bm.note != ''
+                </if>
             </if>
             and t.name = #{bookmarkSearchDTO.keyword}
         </where>
