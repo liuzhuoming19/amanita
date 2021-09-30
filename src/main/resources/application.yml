@@ -25,7 +25,7 @@ logging:
 #自定义配置参数
 amanita:
   token:
-    expire-time-amount: 24
+    expire-time-amount: 1
     expire-time-unit: hours
     refresh-expire-time-amount: 7
     refresh-expire-time-unit: days

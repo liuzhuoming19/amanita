@@ -95,26 +95,28 @@ public class BookmarkServiceImpl implements BookmarkService {
         queryWrapper.eq(Bookmark::getUserId, userId)
                 .orderByDesc(Bookmark::getCreateTime);
         //关键字条件
-        BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
-        if (BookmarkSearchKeywordType.TAG.equals(bookmarkSearchKeywordType)) {
-            //特殊情况，关联查询使用xml查询，mybatis plus的queryWrapper条件不被使用
-            Page<Bookmark> bookmarkPage = bookmarkMapper.pageByTag(page, userId, bookmarkSearchDTO);
-            for (Bookmark bookmark : bookmarkPage.getRecords()) {
-                List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
-                bookmark.setTags(tags);
-                bookmark.setUrl(amanitaProperties.getBookmark().getRedirectUrl() + bookmark.getId());
+        if (bookmarkSearchDTO.getKeywordType() != null) {
+            BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
+            if (BookmarkSearchKeywordType.TAG.equals(bookmarkSearchKeywordType)) {
+                //特殊情况，关联查询使用xml查询，mybatis plus的queryWrapper条件不被使用
+                Page<Bookmark> bookmarkPage = bookmarkMapper.pageByTag(page, userId, bookmarkSearchDTO);
+                for (Bookmark bookmark : bookmarkPage.getRecords()) {
+                    List<Tag> tags = tagService.listByBookmarkId(bookmark.getId());
+                    bookmark.setTags(tags);
+                    bookmark.setUrl(amanitaProperties.getBookmark().getRedirectUrl() + bookmark.getId());
+                }
+                return bookmarkPage;
+            } else if (BookmarkSearchKeywordType.BOOKMARK.equals(bookmarkSearchKeywordType)) {
+                //标题/url/笔记/摘录 模糊搜索
+                queryWrapper.and(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()),
+                        andQueryWrapper ->
+                                andQueryWrapper
+                                        .like(Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
+                                        .or().like(Bookmark::getUrl, bookmarkSearchDTO.getKeyword())
+                                        .or().like(Bookmark::getExcerpt, bookmarkSearchDTO.getKeyword())
+                                        .or().like(Bookmark::getNote, bookmarkSearchDTO.getKeyword())
+                );
             }
-            return bookmarkPage;
-        } else if (BookmarkSearchKeywordType.BOOKMARK.equals(bookmarkSearchKeywordType)) {
-            //标题/url/笔记/摘录 模糊搜索
-            queryWrapper.and(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()),
-                    andQueryWrapper ->
-                            andQueryWrapper
-                                    .like(Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
-                                    .or().like(Bookmark::getUrl, bookmarkSearchDTO.getKeyword())
-                                    .or().like(Bookmark::getExcerpt, bookmarkSearchDTO.getKeyword())
-                                    .or().like(Bookmark::getNote, bookmarkSearchDTO.getKeyword())
-            );
         }
         //查询类型条件
         BookmarkSearchType bookmarkSearchType = BookmarkSearchType.getByCode(bookmarkSearchDTO.getSearchType());
