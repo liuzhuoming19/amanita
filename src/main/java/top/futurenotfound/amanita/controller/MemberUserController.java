@@ -3,6 +3,7 @@ package top.futurenotfound.amanita.controller;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sleepycat.je.rep.MemberNotFoundException;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.util.Date;
  */
 @RequestMapping("member")
 @RestController
+@Api(value = "MemberUserController", tags = "会员controller")
 @AllArgsConstructor
 public class MemberUserController {
     private final MemberUserService memberUserService;
