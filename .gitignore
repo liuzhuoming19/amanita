@@ -25,5 +25,6 @@ hs_err_pid*
 
 /.idea
 /target
+/.iml
 /src/main/resources/application-dev.yml
 /src/main/resources/application-prod.yml

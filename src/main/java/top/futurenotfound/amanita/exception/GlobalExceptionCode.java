@@ -43,6 +43,8 @@ public enum GlobalExceptionCode implements ExceptionCode {
     BOOKMARK_IS_ALREADY_DELETED("00203", "书签已删除"),
     BOOKMARK_TAG_IS_ALREADY_EXIST("00204", "书签标签已存在"),
 
+    MEMBER_NOT_EXIST("00300", "会员不存在"),
+
 
     CONTENT_EXTRACTOR_FAIL("10001", "网页正文抽取失败"),
 
