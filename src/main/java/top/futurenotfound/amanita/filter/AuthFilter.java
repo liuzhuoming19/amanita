@@ -81,6 +81,7 @@ public class AuthFilter implements Filter {
      * 登录后ADMIN及以上权限配置就可以访问
      */
     private static final List<String> ADMIN_ALLOW_URL_LIST = List.of(
+            "/member/**"
     );
     /**
      * 角色路由策略

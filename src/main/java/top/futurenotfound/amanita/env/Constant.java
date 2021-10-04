@@ -29,7 +29,6 @@ public interface Constant {
 
     List<String> COLOR_CODES = new ArrayList<>(
             Set.of(
-                    //TODO 待补充颜色代码
                     "#0aa344",
                     "#70f3ff",
                     "#ffa631",
