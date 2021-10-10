@@ -61,6 +61,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             bookmark.setId(id);
             bookmark.setIsDeleted(Constant.DATABASE_TRUE);
             bookmark.setDeleteTime(DateUtil.now());
+            bookmark.setUpdateTime(DateUtil.now());
             bookmarkMapper.updateById(bookmark);
         } else {
             bookmarkMapper.deleteById(id);
@@ -72,6 +73,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         if (bookmarkMapper.selectById(bookmark.getId()) == null)
             throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
 
+        bookmark.setUpdateTime(DateUtil.now());
         bookmarkMapper.updateById(bookmark);
     }
 
@@ -183,6 +185,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Bookmark update(BookmarkDTO bookmarkDTO) {
         Bookmark bookmark = mkBookmark(bookmarkDTO);
 
+        bookmark.setUpdateTime(DateUtil.now());
         bookmarkMapper.updateById(bookmark);
 
         //先删除全部，再插入

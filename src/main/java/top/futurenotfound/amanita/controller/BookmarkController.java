@@ -94,4 +94,34 @@ public class BookmarkController {
         bookmarkService.deleteById(id);
         return ResponseEntity.ok(bookmark);
     }
+
+    @DeleteMapping("star/{id}")
+    @ApiOperation("取消收藏")
+    public ResponseEntity<Bookmark> deleteStar(@PathVariable String id) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
+
+        bookmark.setIsStarred(0);
+        bookmarkService.updateById(bookmark);
+        return ResponseEntity.ok(bookmark);
+    }
+
+    @PostMapping("star/{id}")
+    @ApiOperation("添加收藏")
+    public ResponseEntity<Bookmark> addStar(@PathVariable String id) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
+
+        bookmark.setIsStarred(1);
+        bookmarkService.updateById(bookmark);
+        return ResponseEntity.ok(bookmark);
+    }
 }
