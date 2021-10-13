@@ -41,6 +41,7 @@ public enum BookmarkSearchType {
             case 0 -> NORMAL;
             case 1 -> STAR;
             case 2 -> DELETE;
+            case 3 -> NOTE;
             default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
         };
     }
