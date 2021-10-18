@@ -17,6 +17,7 @@ import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.service.BookmarkService;
 import top.futurenotfound.amanita.util.CurrentLoginUser;
+import top.futurenotfound.amanita.util.DateUtil;
 import top.futurenotfound.amanita.util.StringUtil;
 
 import javax.validation.Valid;
@@ -121,6 +122,37 @@ public class BookmarkController {
             throw new AuthException(GlobalExceptionCode.NO_AUTH);
 
         bookmark.setIsStarred(1);
+        bookmarkService.updateById(bookmark);
+        return ResponseEntity.ok(bookmark);
+    }
+
+    @DeleteMapping("recycle/{id}")
+    @ApiOperation("取消回收站")
+    public ResponseEntity<Bookmark> deleteRecycle(@PathVariable String id) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
+
+        bookmark.setIsDeleted(0);
+        bookmarkService.updateById(bookmark);
+        return ResponseEntity.ok(bookmark);
+    }
+
+    @PostMapping("recycle/{id}")
+    @ApiOperation("添加回收站")
+    public ResponseEntity<Bookmark> addRecycle(@PathVariable String id) {
+        User user = CurrentLoginUser.get();
+        Bookmark bookmark = bookmarkService.getById(id);
+
+        if (bookmark == null) throw new BookmarkException(GlobalExceptionCode.BOOKMARK_NOT_EXIST);
+        if (!StringUtil.equals(user.getId(), bookmark.getUserId()))
+            throw new AuthException(GlobalExceptionCode.NO_AUTH);
+
+        bookmark.setIsDeleted(1);
+        bookmark.setDeleteTime(DateUtil.now());
         bookmarkService.updateById(bookmark);
         return ResponseEntity.ok(bookmark);
     }

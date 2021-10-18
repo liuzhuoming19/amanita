@@ -7,9 +7,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import top.futurenotfound.amanita.domain.Access;
+import top.futurenotfound.amanita.domain.UrlAuth;
 import top.futurenotfound.amanita.domain.User;
 import top.futurenotfound.amanita.env.Constant;
 import top.futurenotfound.amanita.env.SourceType;
+import top.futurenotfound.amanita.env.UrlAuthMethodType;
 import top.futurenotfound.amanita.env.UserRoleType;
 import top.futurenotfound.amanita.exception.AuthException;
 import top.futurenotfound.amanita.exception.BookmarkException;
@@ -36,6 +38,7 @@ import java.util.function.Predicate;
  * 认证过滤器
  *
  * @author liuzhuoming
+ * @see UrlAuth
  */
 @Component
 @Order(2)
@@ -46,50 +49,50 @@ public class AuthFilter implements Filter {
     /**
      * 不登录就可以访问
      */
-    private static final List<String> NOT_LOGIN_ALLOW_URL_LIST = List.of(
-            "/favicon.ico",
-            "/css/**",
-            "/js/**",
-            "/doc.html",
-            "/webjars/**",
-            "/swagger**",
-            "/v3/**",
-            "/token/**",
-            "/redirect/**",
-            "/user/register"
+    private static final List<UrlAuth> NOT_LOGIN_ALLOW_URL_LIST = List.of(
+            new UrlAuth(UrlAuthMethodType.GET, "/favicon.ico"),
+            new UrlAuth(UrlAuthMethodType.GET, "/css/**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/js/**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/doc.html"),
+            new UrlAuth(UrlAuthMethodType.GET, "/webjars/**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/swagger**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/v3/**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/token/**"),
+            new UrlAuth(UrlAuthMethodType.GET, "/redirect/**"),
+            new UrlAuth(UrlAuthMethodType.POST, "/user")
     );
     /**
      * 登录后无需权限配置就可以访问
      */
-    private static final List<String> LOGIN_ALLOW_URL_LIST = List.of(
-            "/bookmark/**",
-            "/user/**",
-            "/tag/**"
+    private static final List<UrlAuth> LOGIN_ALLOW_URL_LIST = List.of(
+            new UrlAuth(UrlAuthMethodType.ALL, "/bookmark/**"),
+            new UrlAuth(UrlAuthMethodType.ALL, "/tag/**"),
+            new UrlAuth(UrlAuthMethodType.ALL, "/user/**")
     );
     /**
      * 登录后USER及以上权限配置就可以访问
      */
-    private static final List<String> USER_ALLOW_URL_LIST = List.of(
+    private static final List<UrlAuth> USER_ALLOW_URL_LIST = List.of(
     );
     /**
      * 登录后VIP及以上权限配置就可以访问
      */
-    private static final List<String> VIP_ALLOW_URL_LIST = List.of(
-            "/access/**"
+    private static final List<UrlAuth> VIP_ALLOW_URL_LIST = List.of(
+            new UrlAuth(UrlAuthMethodType.ALL, "/access/**")
     );
     /**
      * 登录后ADMIN及以上权限配置就可以访问
      */
-    private static final List<String> ADMIN_ALLOW_URL_LIST = List.of(
-            "/member/**"
+    private static final List<UrlAuth> ADMIN_ALLOW_URL_LIST = List.of(
+            new UrlAuth(UrlAuthMethodType.ALL, "/member/**")
     );
     /**
      * 角色路由策略
      */
-    private static final Map<UserRoleType, Predicate<String>> ROLE_STRATEGY = Map.of(
-            UserRoleType.USER, (String url) -> matchAny(USER_ALLOW_URL_LIST, url),
-            UserRoleType.VIP, (String url) -> matchAny(USER_ALLOW_URL_LIST, url) || matchAny(VIP_ALLOW_URL_LIST, url),
-            UserRoleType.ADMIN, (String url) -> matchAny(USER_ALLOW_URL_LIST, url) || matchAny(VIP_ALLOW_URL_LIST, url) || matchAny(ADMIN_ALLOW_URL_LIST, url)
+    private static final Map<UserRoleType, Predicate<HttpServletRequest>> ROLE_STRATEGY = Map.of(
+            UserRoleType.USER, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request),
+            UserRoleType.VIP, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request),
+            UserRoleType.ADMIN, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request) || matchAny(ADMIN_ALLOW_URL_LIST, request)
     );
 
     private final UserService userService;
@@ -99,13 +102,21 @@ public class AuthFilter implements Filter {
     /**
      * 判断url请求是否配置在patterns列表中
      */
-    private static boolean matchAny(List<String> patterns, String url) {
+    private static boolean matchAny(List<UrlAuth> urlAuths, HttpServletRequest request) {
+        String url = request.getRequestURI();
+        String method = request.getMethod();
         final AntPathMatcher antPathMatcher = new AntPathMatcher();
-        for (String pattern : patterns) {
+        for (UrlAuth urlAuth : urlAuths) {
+            String urlpattern = urlAuth.getUrl();
+            UrlAuthMethodType methodPattern = urlAuth.getMethod();
             if (url.startsWith("/")) url = url.substring(1);
-            if (pattern.startsWith("/")) pattern = pattern.substring(1);
-            if (antPathMatcher.match(pattern, url)) {
-                return true;
+            if (urlpattern.startsWith("/")) urlpattern = urlpattern.substring(1);
+
+            if (antPathMatcher.match(urlpattern, url)) {
+                UrlAuthMethodType urlAuthMethodType = UrlAuthMethodType.getByName(method);
+                //匹配方式为ALL则直接返回true
+                if (UrlAuthMethodType.ALL.equals(methodPattern)) return true;
+                return methodPattern.equals(urlAuthMethodType);
             }
         }
         return false;
@@ -116,9 +127,7 @@ public class AuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
-        String url = req.getRequestURI();
-
-        if (matchAny(NOT_LOGIN_ALLOW_URL_LIST, url)) {
+        if (matchAny(NOT_LOGIN_ALLOW_URL_LIST, req)) {
             chain.doFilter(req, resp);
             return;
         }
@@ -190,14 +199,14 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        if (matchAny(LOGIN_ALLOW_URL_LIST, url)) {
+        if (matchAny(LOGIN_ALLOW_URL_LIST, req)) {
             chain.doFilter(req, resp);
             return;
         }
 
         UserRoleType userRoleType = UserRoleType.getByName(user.getRole());
         //针对角色的路由策略模式
-        if (ROLE_STRATEGY.get(userRoleType).test(url)) {
+        if (ROLE_STRATEGY.get(userRoleType).test(req)) {
             chain.doFilter(req, resp);
             return;
         }
