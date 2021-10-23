@@ -28,4 +28,6 @@ public interface BookmarkService {
     Bookmark save(BookmarkDTO bookmarkDTO);
 
     Bookmark update(BookmarkDTO bookmarkDTO);
+
+    Bookmark mkBookmark(BookmarkDTO bookmarkDTO);
 }

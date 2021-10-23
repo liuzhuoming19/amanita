@@ -206,7 +206,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         return bookmarkMapper.selectCount(queryWrapper);
     }
 
-    private Bookmark mkBookmark(BookmarkDTO bookmarkDTO) {
+    public Bookmark mkBookmark(BookmarkDTO bookmarkDTO) {
         User user = CurrentLoginUser.get();
 
         String url = bookmarkDTO.getUrl();
