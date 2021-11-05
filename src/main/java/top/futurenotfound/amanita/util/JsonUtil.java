@@ -3,6 +3,8 @@ package top.futurenotfound.amanita.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import top.futurenotfound.amanita.exception.BookmarkException;
+import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 
 /**
  * Json工具
@@ -21,7 +23,7 @@ public class JsonUtil {
             return objectMapper.writeValueAsString(t);
         } catch (JsonProcessingException e) {
             log.error("{}", e);
-            return null;
+            throw new BookmarkException(GlobalExceptionCode.JSON_ERROR);
         }
     }
 
@@ -30,7 +32,7 @@ public class JsonUtil {
             return objectMapper.readValue(json, clazz);
         } catch (JsonProcessingException e) {
             log.error("{}", e);
-            return null;
+            throw new BookmarkException(GlobalExceptionCode.JSON_ERROR);
         }
     }
 }

@@ -17,7 +17,6 @@ import top.futurenotfound.amanita.exception.BookmarkException;
 import top.futurenotfound.amanita.exception.GlobalExceptionCode;
 import top.futurenotfound.amanita.helper.RedisPublisher;
 import top.futurenotfound.amanita.service.BookmarkService;
-import top.futurenotfound.amanita.util.BeanUtil;
 import top.futurenotfound.amanita.util.CurrentLoginUser;
 import top.futurenotfound.amanita.util.DateUtil;
 import top.futurenotfound.amanita.util.StringUtil;
@@ -65,9 +64,7 @@ public class BookmarkController {
     @PostMapping
     @ApiOperation("新增")
     public ResponseEntity<Bookmark> add(@RequestBody @Valid BookmarkDTO bookmarkDTO) {
-        Bookmark bookmark = BeanUtil.convert(bookmarkDTO, Bookmark.class);
-        //发送至队列等待消费
-        redisPublisher.sendToMessageQueue(bookmarkDTO);
+        Bookmark bookmark = bookmarkService.save(bookmarkDTO);
         return ResponseEntity.ok(bookmark);
     }
 

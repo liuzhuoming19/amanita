@@ -4,6 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * 用户设置入参
  *
@@ -11,7 +14,9 @@ import lombok.Data;
  */
 @ApiModel(value = "UserSettingDTO", description = "用户设置入参")
 @Data
-public class UserSettingDTO {
+public class UserSettingDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -8505910008519846972L;
     @ApiModelProperty("是否开启页面简述存档（功能类设置） 0否1是")
     private Integer allowFeatExcerptPageArchive;
     @ApiModelProperty("是否开启页面全文存档（功能类设置） 0否1是")

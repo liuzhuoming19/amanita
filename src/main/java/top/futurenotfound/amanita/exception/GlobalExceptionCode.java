@@ -50,6 +50,7 @@ public enum GlobalExceptionCode implements ExceptionCode {
 
     BEAN_ERROR("11000", "bean操作错误"),
     ENUM_ERROR("11001", "enum操作错误"),
+    JSON_ERROR("11002", "json操作错误"),
     ;
 
     private String code;
