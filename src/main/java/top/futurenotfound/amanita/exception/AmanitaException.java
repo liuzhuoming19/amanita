@@ -1,5 +1,7 @@
 package top.futurenotfound.amanita.exception;
 
+import java.io.Serial;
+
 /**
  * 项目中所有异常父类
  * <p>
@@ -7,7 +9,13 @@ package top.futurenotfound.amanita.exception;
  *
  * @author liuzhuoming
  */
-public interface AmanitaException {
+public abstract class AmanitaException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 7242431302288827227L;
 
-    ExceptionCode getExceptionCode();
+    public AmanitaException(String message) {
+        super(message);
+    }
+
+    abstract public ExceptionCode getExceptionCode();
 }

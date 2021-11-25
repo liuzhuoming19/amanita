@@ -10,7 +10,7 @@ import java.io.Serial;
  * @author liuzhuoming
  */
 @Getter
-public class AuthException extends RuntimeException implements AmanitaException {
+public class AuthException extends AmanitaException {
     @Serial
     private static final long serialVersionUID = -5786150841339936581L;
     private final ExceptionCode exceptionCode;
