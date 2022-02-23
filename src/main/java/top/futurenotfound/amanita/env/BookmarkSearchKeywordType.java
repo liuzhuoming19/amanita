@@ -27,10 +27,13 @@ public enum BookmarkSearchKeywordType {
 
     public static BookmarkSearchKeywordType getByCode(Integer code) {
         if (code == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        return switch (code) {
-            case 0 -> BOOKMARK;
-            case 1 -> TAG;
-            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        };
+        switch (code) {
+            case 0:
+                return BOOKMARK;
+            case 1:
+                return TAG;
+            default:
+                throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
+        }
     }
 }

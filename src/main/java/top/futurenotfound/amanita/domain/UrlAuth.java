@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import top.futurenotfound.amanita.env.UrlAuthMethodType;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,7 +14,6 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class UrlAuth implements Serializable {
-    @Serial
     private static final long serialVersionUID = 548265579936148246L;
     /**
      * 请求类型

@@ -21,11 +21,15 @@ public enum UserRoleType {
 
     public static UserRoleType getByName(String name) {
         if (name == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        return switch (name) {
-            case "USER" -> USER;
-            case "VIP" -> VIP;
-            case "ADMIN" -> ADMIN;
-            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        };
+        switch (name) {
+            case "USER":
+                return USER;
+            case "VIP":
+                return VIP;
+            case "ADMIN":
+                return ADMIN;
+            default:
+                throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
+        }
     }
 }

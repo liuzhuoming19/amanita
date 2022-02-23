@@ -33,11 +33,15 @@ public enum VipType {
 
     public static VipType getByCode(Integer code) {
         if (code == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        return switch (code) {
-            case 0 -> DONATE;
-            case 1 -> FREE;
-            case 2 -> PAY;
-            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        };
+        switch (code) {
+            case 0:
+                return DONATE;
+            case 1:
+                return FREE;
+            case 2:
+                return PAY;
+            default:
+                throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
+        }
     }
 }

@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import top.futurenotfound.amanita.env.Constant;
 
-import java.io.Serial;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +28,6 @@ public class ImgUrlExtractorStrategy {
      * 新增策略需添加在此
      */
     private static final Map<String, Function<URL, String>> IMG_STRATEGY = new ConcurrentHashMap<>() {
-        @Serial
         private static final long serialVersionUID = -5272813377667100165L;
 
         {

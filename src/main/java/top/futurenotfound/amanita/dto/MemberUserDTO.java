@@ -3,13 +3,11 @@ package top.futurenotfound.amanita.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
 @ApiModel(value = "MemberUserDTO", description = "会员入参")
 public class MemberUserDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = -4350404879013155885L;
     @ApiModelProperty(value = "会员id")
     private String id;

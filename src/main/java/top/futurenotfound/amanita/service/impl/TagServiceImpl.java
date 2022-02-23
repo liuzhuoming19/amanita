@@ -41,7 +41,7 @@ public class TagServiceImpl implements TagService {
                 .distinct()
                 .collect(Collectors.toList());
         if (tagIds.isEmpty()) return Collections.emptyList();
-        return tagMapper.selectBatchIds(tagIds).stream().filter(Objects::nonNull).toList();
+        return tagMapper.selectBatchIds(tagIds).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override

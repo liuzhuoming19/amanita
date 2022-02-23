@@ -2,8 +2,6 @@ package top.futurenotfound.amanita.exception;
 
 import lombok.Getter;
 
-import java.io.Serial;
-
 /**
  * 书签异常
  *
@@ -11,7 +9,6 @@ import java.io.Serial;
  */
 @Getter
 public class BookmarkException extends AmanitaException {
-    @Serial
     private static final long serialVersionUID = -5786150841339936581L;
     private final ExceptionCode exceptionCode;
 

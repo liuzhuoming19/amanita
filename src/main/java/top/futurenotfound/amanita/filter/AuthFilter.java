@@ -49,51 +49,27 @@ public class AuthFilter implements Filter {
     /**
      * 不登录就可以访问
      */
-    private static final List<UrlAuth> NOT_LOGIN_ALLOW_URL_LIST = List.of(
-            new UrlAuth(UrlAuthMethodType.GET, "/favicon.ico"),
-            new UrlAuth(UrlAuthMethodType.GET, "/css/**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/js/**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/doc.html"),
-            new UrlAuth(UrlAuthMethodType.GET, "/webjars/**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/swagger**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/v3/**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/token/**"),
-            new UrlAuth(UrlAuthMethodType.GET, "/redirect/**"),
-            new UrlAuth(UrlAuthMethodType.POST, "/user")
-    );
+    private static final List<UrlAuth> NOT_LOGIN_ALLOW_URL_LIST = List.of(new UrlAuth(UrlAuthMethodType.GET, "/favicon.ico"), new UrlAuth(UrlAuthMethodType.GET, "/css/**"), new UrlAuth(UrlAuthMethodType.GET, "/js/**"), new UrlAuth(UrlAuthMethodType.GET, "/doc.html"), new UrlAuth(UrlAuthMethodType.GET, "/webjars/**"), new UrlAuth(UrlAuthMethodType.GET, "/swagger**"), new UrlAuth(UrlAuthMethodType.GET, "/v3/**"), new UrlAuth(UrlAuthMethodType.GET, "/token/**"), new UrlAuth(UrlAuthMethodType.GET, "/redirect/**"), new UrlAuth(UrlAuthMethodType.POST, "/user"));
     /**
      * 登录后无需权限配置就可以访问
      */
-    private static final List<UrlAuth> LOGIN_ALLOW_URL_LIST = List.of(
-            new UrlAuth(UrlAuthMethodType.ALL, "/bookmark/**"),
-            new UrlAuth(UrlAuthMethodType.ALL, "/tag/**"),
-            new UrlAuth(UrlAuthMethodType.ALL, "/user/**")
-    );
+    private static final List<UrlAuth> LOGIN_ALLOW_URL_LIST = List.of(new UrlAuth(UrlAuthMethodType.ALL, "/bookmark/**"), new UrlAuth(UrlAuthMethodType.ALL, "/tag/**"), new UrlAuth(UrlAuthMethodType.ALL, "/user/**"));
     /**
      * 登录后USER及以上权限配置就可以访问
      */
-    private static final List<UrlAuth> USER_ALLOW_URL_LIST = List.of(
-    );
+    private static final List<UrlAuth> USER_ALLOW_URL_LIST = List.of();
     /**
      * 登录后VIP及以上权限配置就可以访问
      */
-    private static final List<UrlAuth> VIP_ALLOW_URL_LIST = List.of(
-            new UrlAuth(UrlAuthMethodType.ALL, "/access/**")
-    );
+    private static final List<UrlAuth> VIP_ALLOW_URL_LIST = List.of(new UrlAuth(UrlAuthMethodType.ALL, "/access/**"));
     /**
      * 登录后ADMIN及以上权限配置就可以访问
      */
-    private static final List<UrlAuth> ADMIN_ALLOW_URL_LIST = List.of(
-            new UrlAuth(UrlAuthMethodType.ALL, "/member/**")
-    );
+    private static final List<UrlAuth> ADMIN_ALLOW_URL_LIST = List.of(new UrlAuth(UrlAuthMethodType.ALL, "/member/**"));
     /**
      * 角色路由策略
      */
-    private static final Map<UserRoleType, Predicate<HttpServletRequest>> ROLE_STRATEGY = Map.of(
-            UserRoleType.USER, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request),
-            UserRoleType.VIP, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request),
-            UserRoleType.ADMIN, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request) || matchAny(ADMIN_ALLOW_URL_LIST, request)
-    );
+    private static final Map<UserRoleType, Predicate<HttpServletRequest>> ROLE_STRATEGY = Map.of(UserRoleType.USER, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request), UserRoleType.VIP, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request), UserRoleType.ADMIN, (HttpServletRequest request) -> matchAny(USER_ALLOW_URL_LIST, request) || matchAny(VIP_ALLOW_URL_LIST, request) || matchAny(ADMIN_ALLOW_URL_LIST, request));
 
     private final UserService userService;
     private final AccessService accessService;
@@ -149,7 +125,7 @@ public class AuthFilter implements Filter {
         User user;
         try {
             switch (sourceType) {
-                case WEB -> { //jwt验证
+                case WEB: //jwt验证
                     String token = req.getHeader(Constant.HEADER_AUTHORIZATION);
                     if (StringUtil.isEmpty(token)) {
                         sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
@@ -162,8 +138,8 @@ public class AuthFilter implements Filter {
                         sendError(resp, GlobalExceptionCode.TOKEN_EXPIRED);
                         return;
                     }
-                }
-                case API -> { //access验证
+                    break;
+                case API: //access验证
                     String accessKey = req.getHeader(Constant.HEADER_ACCESS_KEY);
                     String accessSecret = req.getHeader(Constant.HEADER_ACCESS_SECRET);
                     Access access = accessService.getByKeyAndSecret(accessKey, accessSecret);
@@ -173,16 +149,14 @@ public class AuthFilter implements Filter {
                     }
                     user = userService.getById(access.getUserId());
                     //只有VIP及ADMIN具备access认证权限
-                    if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName())
-                            && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
+                    if (!Objects.equals(user.getRole(), UserRoleType.VIP.getName()) && !Objects.equals(user.getRole(), UserRoleType.ADMIN.getName())) {
                         sendError(resp, GlobalExceptionCode.NO_AUTH);
                         return;
                     }
-                }
-                default -> {
+                    break;
+                default:
                     sendError(resp, GlobalExceptionCode.UNKNOWN_SOURCE);
                     return;
-                }
             }
 
             if (user == null) {

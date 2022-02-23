@@ -55,8 +55,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         vip删除书签可以逻辑删除（伪回收站
         查询回收站书签应设置至今30天内的查询时间
          */
-        if ((UserRoleType.VIP.getName().equals(user.getRole()) || UserRoleType.ADMIN.getName().equals(user.getRole()))
-                && Objects.equals(userSetting.getAllowFeatBookmarkDeletedHistory(), Constant.DATABASE_TRUE)) {
+        if ((UserRoleType.VIP.getName().equals(user.getRole()) || UserRoleType.ADMIN.getName().equals(user.getRole())) && Objects.equals(userSetting.getAllowFeatBookmarkDeletedHistory(), Constant.DATABASE_TRUE)) {
             Bookmark bookmark = new Bookmark();
             bookmark.setId(id);
             bookmark.setIsDeleted(Constant.DATABASE_TRUE);
@@ -99,8 +98,7 @@ public class BookmarkServiceImpl implements BookmarkService {
     public Page<Bookmark> pageByUserIdAndSearchType(String userId, BookmarkSearchDTO bookmarkSearchDTO, Page<Bookmark> page) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
         //基础条件
-        queryWrapper.eq(Bookmark::getUserId, userId)
-                .orderByDesc(Bookmark::getCreateTime);
+        queryWrapper.eq(Bookmark::getUserId, userId).orderByDesc(Bookmark::getCreateTime);
         //关键字条件
         if (bookmarkSearchDTO.getKeywordType() != null) {
             BookmarkSearchKeywordType bookmarkSearchKeywordType = BookmarkSearchKeywordType.getByCode(bookmarkSearchDTO.getKeywordType());
@@ -115,32 +113,29 @@ public class BookmarkServiceImpl implements BookmarkService {
                 return bookmarkPage;
             } else if (BookmarkSearchKeywordType.BOOKMARK.equals(bookmarkSearchKeywordType)) {
                 //标题/url/笔记/摘录 模糊搜索
-                queryWrapper.and(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()),
-                        andQueryWrapper ->
-                                andQueryWrapper
-                                        .like(Bookmark::getTitle, bookmarkSearchDTO.getKeyword())
-                                        .or().like(Bookmark::getUrl, bookmarkSearchDTO.getKeyword())
-                                        .or().like(Bookmark::getExcerpt, bookmarkSearchDTO.getKeyword())
-                                        .or().like(Bookmark::getNote, bookmarkSearchDTO.getKeyword())
-                );
+                queryWrapper.and(StringUtil.isNotEmpty(bookmarkSearchDTO.getKeyword()), andQueryWrapper -> andQueryWrapper.like(Bookmark::getTitle, bookmarkSearchDTO.getKeyword()).or().like(Bookmark::getUrl, bookmarkSearchDTO.getKeyword()).or().like(Bookmark::getExcerpt, bookmarkSearchDTO.getKeyword()).or().like(Bookmark::getNote, bookmarkSearchDTO.getKeyword()));
             }
         }
         //查询类型条件
         BookmarkSearchType bookmarkSearchType = BookmarkSearchType.getByCode(bookmarkSearchDTO.getSearchType());
         switch (bookmarkSearchType) {
-            case NORMAL -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
-            case STAR -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                    .eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE);
-            case DELETE -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
-                    //仅限30天内已删除数据
-                    .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time",
-                            DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
-            case NOTE -> queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE)
-                    .isNotNull(Bookmark::getNote)
-                    .ne(Bookmark::getNote, "");
-            default -> {
+            case NORMAL:
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
+                break;
+            case STAR:
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE).eq(Bookmark::getIsStarred, Constant.DATABASE_TRUE);
+                break;
+            case DELETE:
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_TRUE)
+                        //仅限30天内已删除数据
+                        .apply("to_date({0},'yyyy-mm-dd hh24:mi:ss') <= delete_time", DateUtil.format(DateUtil.add(DateUtil.now(), ChronoUnit.DAYS, -30), DateUtil.DATETIME_FORMATTER));
+                break;
+            case NOTE:
+                queryWrapper.eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE).isNotNull(Bookmark::getNote).ne(Bookmark::getNote, "");
+                break;
+            default:
                 //do nothing
-            }
+                break;
         }
         queryWrapper.orderByDesc(Bookmark::getCreateTime);
         Page<Bookmark> bookmarkPage = bookmarkMapper.selectPage(page, queryWrapper);
@@ -161,8 +156,7 @@ public class BookmarkServiceImpl implements BookmarkService {
      */
     private boolean isExistByUserIdAndUrl(String userId, String url) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Bookmark::getUserId, userId)
-                .eq(Bookmark::getUrl, url);
+        queryWrapper.eq(Bookmark::getUserId, userId).eq(Bookmark::getUrl, url);
         return bookmarkMapper.selectOne(queryWrapper) != null;
     }
 
@@ -201,8 +195,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     private Long count(String userId) {
         LambdaQueryWrapper<Bookmark> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Bookmark::getUserId, userId)
-                .eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
+        queryWrapper.eq(Bookmark::getUserId, userId).eq(Bookmark::getIsDeleted, Constant.DATABASE_FALSE);
         return bookmarkMapper.selectCount(queryWrapper);
     }
 
@@ -222,8 +215,7 @@ public class BookmarkServiceImpl implements BookmarkService {
         bookmark.setIsStarred(bookmarkDTO.getIsStarred() == 1 ? 1 : 0);
 
         //普通用户可收藏书签数量上限
-        if (!UserRoleType.VIP.getName().equals(user.getRole())
-                && count(user.getId()) >= amanitaProperties.getBookmark().getUserNumMax()) {
+        if (!UserRoleType.VIP.getName().equals(user.getRole()) && count(user.getId()) >= amanitaProperties.getBookmark().getUserNumMax()) {
             throw new BookmarkException(GlobalExceptionCode.USER_HAS_MAX_BOOKMARKS);
         }
 
@@ -248,8 +240,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             bookmark.setTitle(url);
         }
 
-        if (UserRoleType.VIP.getName().equals(user.getRole())
-                && Objects.equals(userSetting.getAllowFeatFullPageArchive(), Constant.DATABASE_TRUE)) {
+        if (UserRoleType.VIP.getName().equals(user.getRole()) && Objects.equals(userSetting.getAllowFeatFullPageArchive(), Constant.DATABASE_TRUE)) {
             //TODO 全文保存
         }
         return bookmark;

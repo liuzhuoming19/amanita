@@ -25,10 +25,13 @@ public enum SourceType {
 
     public static SourceType getByName(String name) {
         if (name == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        return switch (name) {
-            case "WEB" -> WEB;
-            case "API" -> API;
-            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        };
+        switch (name) {
+            case "WEB":
+                return WEB;
+            case "API":
+                return API;
+            default:
+                throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
+        }
     }
 }

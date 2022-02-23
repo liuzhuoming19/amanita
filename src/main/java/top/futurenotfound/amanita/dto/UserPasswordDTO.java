@@ -3,7 +3,6 @@ package top.futurenotfound.amanita.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,7 +12,6 @@ import java.io.Serializable;
  */
 @Data
 public class UserPasswordDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1382529734984683447L;
     @NotEmpty
     private String password;

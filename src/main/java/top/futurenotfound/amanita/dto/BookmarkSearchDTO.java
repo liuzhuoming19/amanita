@@ -8,7 +8,6 @@ import top.futurenotfound.amanita.env.BookmarkSearchKeywordType;
 import top.futurenotfound.amanita.env.BookmarkSearchType;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,7 +18,6 @@ import java.io.Serializable;
 @Data
 @ApiModel(value = "BookmarkSearchDTO", description = "书签搜索入参")
 public class BookmarkSearchDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = -1318589269631532670L;
     /**
      * @see BookmarkSearchKeywordType

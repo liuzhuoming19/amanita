@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -15,7 +14,6 @@ import java.io.Serializable;
 @ApiModel(value = "BookmarkTagDTO", description = "书签标签入参")
 @Data
 public class BookmarkTagDTO implements Serializable {
-    @Serial
     private static final long serialVersionUID = 3618862567286379862L;
     /**
      * 书签id

@@ -15,13 +15,19 @@ public enum UrlAuthMethodType {
 
     public static UrlAuthMethodType getByName(String name) {
         if (name == null) return null;
-        return switch (name) {
-            case "ALL" -> ALL;
-            case "GET" -> GET;
-            case "POST" -> POST;
-            case "PUT" -> PUT;
-            case "DELETE" -> DELETE;
-            default -> null;
-        };
+        switch (name) {
+            case "ALL":
+                return ALL;
+            case "GET":
+                return GET;
+            case "POST":
+                return POST;
+            case "PUT":
+                return PUT;
+            case "DELETE":
+                return DELETE;
+            default:
+                return null;
+        }
     }
 }

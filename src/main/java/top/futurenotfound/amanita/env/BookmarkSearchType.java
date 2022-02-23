@@ -37,12 +37,17 @@ public enum BookmarkSearchType {
 
     public static BookmarkSearchType getByCode(Integer code) {
         if (code == null) throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        return switch (code) {
-            case 0 -> NORMAL;
-            case 1 -> STAR;
-            case 2 -> DELETE;
-            case 3 -> NOTE;
-            default -> throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
-        };
+        switch (code) {
+            case 0:
+                return NORMAL;
+            case 1:
+                return STAR;
+            case 2:
+                return DELETE;
+            case 3:
+                return NOTE;
+            default:
+                throw new BookmarkException(GlobalExceptionCode.ENUM_ERROR);
+        }
     }
 }
