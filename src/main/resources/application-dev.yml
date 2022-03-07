@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: root
+    password: root
+  redis:
+    host: 127.0.0.1
+    password:
+    port: 6379
+
+amanita:
+  token:
+    sign-key: ""
+  bookmark:
+    redirect-url: ""
