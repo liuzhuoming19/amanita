@@ -13,4 +13,4 @@ amanita:
   token:
     sign-key: ""
   bookmark:
-    redirect-url: ""
+    redirect-url: "http://localhost:8091/redirect/"
